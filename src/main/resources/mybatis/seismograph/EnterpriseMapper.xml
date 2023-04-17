@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.seismograph.mapper.EnterpriseMapper">
+    
+    <resultMap type="Enterprise" id="EnterpriseResult">
+        <result property="enterpriseId"    column="enterprise_id"    />
+        <result property="name"    column="name"    />
+        <result property="abbreviation"    column="abbreviation"    />
+        <result property="mailingAddress"    column="mailing_address"    />
+        <result property="uniformSocialCreditCode"    column="uniform_social_credit_code"    />
+        <result property="contactPerson"    column="contact_person"    />
+        <result property="contactWay"    column="contact_way"    />
+        <result property="enterpriseLevel"    column="enterprise_level"    />
+        <result property="numberOfUsers"    column="number_of_users"    />
+        <result property="useDiskSize"    column="use_disk_size"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectEnterpriseVo">
+        select enterprise_id, name, abbreviation, mailing_address, uniform_social_credit_code, contact_person, contact_way, enterprise_level, number_of_users, use_disk_size, status, create_time, update_time from t_enterprise
+    </sql>
+
+    <select id="selectEnterpriseList" parameterType="Enterprise" resultMap="EnterpriseResult">
+        <include refid="selectEnterpriseVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="mailingAddress != null  and mailingAddress != ''"> and mailing_address = #{mailingAddress}</if>
+            <if test="uniformSocialCreditCode != null  and uniformSocialCreditCode != ''"> and uniform_social_credit_code = #{uniformSocialCreditCode}</if>
+            <if test="enterpriseLevel != null  and enterpriseLevel != ''"> and enterprise_level = #{enterpriseLevel}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectEnterpriseByEnterpriseId" parameterType="Long" resultMap="EnterpriseResult">
+        <include refid="selectEnterpriseVo"/>
+        where enterprise_id = #{enterpriseId}
+    </select>
+        
+    <insert id="insertEnterprise" parameterType="Enterprise" useGeneratedKeys="true" keyProperty="enterpriseId">
+        insert into t_enterprise
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="abbreviation != null and abbreviation != ''">abbreviation,</if>
+            <if test="mailingAddress != null and mailingAddress != ''">mailing_address,</if>
+            <if test="uniformSocialCreditCode != null and uniformSocialCreditCode != ''">uniform_social_credit_code,</if>
+            <if test="contactPerson != null and contactPerson != ''">contact_person,</if>
+            <if test="contactWay != null and contactWay != ''">contact_way,</if>
+            <if test="enterpriseLevel != null and enterpriseLevel != ''">enterprise_level,</if>
+            <if test="numberOfUsers != null">number_of_users,</if>
+            <if test="useDiskSize != null">use_disk_size,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="abbreviation != null and abbreviation != ''">#{abbreviation},</if>
+            <if test="mailingAddress != null and mailingAddress != ''">#{mailingAddress},</if>
+            <if test="uniformSocialCreditCode != null and uniformSocialCreditCode != ''">#{uniformSocialCreditCode},</if>
+            <if test="contactPerson != null and contactPerson != ''">#{contactPerson},</if>
+            <if test="contactWay != null and contactWay != ''">#{contactWay},</if>
+            <if test="enterpriseLevel != null and enterpriseLevel != ''">#{enterpriseLevel},</if>
+            <if test="numberOfUsers != null">#{numberOfUsers},</if>
+            <if test="useDiskSize != null">#{useDiskSize},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEnterprise" parameterType="Enterprise">
+        update t_enterprise
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="abbreviation != null and abbreviation != ''">abbreviation = #{abbreviation},</if>
+            <if test="mailingAddress != null and mailingAddress != ''">mailing_address = #{mailingAddress},</if>
+            <if test="uniformSocialCreditCode != null and uniformSocialCreditCode != ''">uniform_social_credit_code = #{uniformSocialCreditCode},</if>
+            <if test="contactPerson != null and contactPerson != ''">contact_person = #{contactPerson},</if>
+            <if test="contactWay != null and contactWay != ''">contact_way = #{contactWay},</if>
+            <if test="enterpriseLevel != null and enterpriseLevel != ''">enterprise_level = #{enterpriseLevel},</if>
+            <if test="numberOfUsers != null">number_of_users = #{numberOfUsers},</if>
+            <if test="useDiskSize != null">use_disk_size = #{useDiskSize},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where enterprise_id = #{enterpriseId}
+    </update>
+
+    <delete id="deleteEnterpriseByEnterpriseId" parameterType="Long">
+        delete from t_enterprise where enterprise_id = #{enterpriseId}
+    </delete>
+
+    <delete id="deleteEnterpriseByEnterpriseIds" parameterType="String">
+        delete from t_enterprise where enterprise_id in 
+        <foreach item="enterpriseId" collection="array" open="(" separator="," close=")">
+            #{enterpriseId}
+        </foreach>
+    </delete>
+</mapper>
