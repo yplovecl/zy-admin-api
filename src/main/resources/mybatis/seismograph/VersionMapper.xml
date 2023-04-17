@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.seismograph.mapper.VersionMapper">
+    
+    <resultMap type="Version" id="VersionResult">
+        <result property="versionId"    column="version_id"    />
+        <result property="no"    column="no"    />
+        <result property="log"    column="log"    />
+        <result property="uri"    column="uri"    />
+        <result property="type"    column="type"    />
+        <result property="enforce"    column="enforce"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectVersionVo">
+        select version_id, no, log, uri, type, enforce, create_time, update_time from t_version
+    </sql>
+
+    <select id="selectVersionList" parameterType="Version" resultMap="VersionResult">
+        <include refid="selectVersionVo"/>
+        <where>  
+            <if test="no != null  and no != ''"> and no = #{no}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="enforce != null  and enforce != ''"> and enforce = #{enforce}</if>
+        </where>
+    </select>
+    
+    <select id="selectVersionByVersionId" parameterType="Long" resultMap="VersionResult">
+        <include refid="selectVersionVo"/>
+        where version_id = #{versionId}
+    </select>
+        
+    <insert id="insertVersion" parameterType="Version" useGeneratedKeys="true" keyProperty="versionId">
+        insert into t_version
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="no != null and no != ''">no,</if>
+            <if test="log != null and log != ''">log,</if>
+            <if test="uri != null and uri != ''">uri,</if>
+            <if test="type != null and type != ''">type,</if>
+            <if test="enforce != null and enforce != ''">enforce,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="no != null and no != ''">#{no},</if>
+            <if test="log != null and log != ''">#{log},</if>
+            <if test="uri != null and uri != ''">#{uri},</if>
+            <if test="type != null and type != ''">#{type},</if>
+            <if test="enforce != null and enforce != ''">#{enforce},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVersion" parameterType="Version">
+        update t_version
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="no != null and no != ''">no = #{no},</if>
+            <if test="log != null and log != ''">log = #{log},</if>
+            <if test="uri != null and uri != ''">uri = #{uri},</if>
+            <if test="type != null and type != ''">type = #{type},</if>
+            <if test="enforce != null and enforce != ''">enforce = #{enforce},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where version_id = #{versionId}
+    </update>
+
+    <delete id="deleteVersionByVersionId" parameterType="Long">
+        delete from t_version where version_id = #{versionId}
+    </delete>
+
+    <delete id="deleteVersionByVersionIds" parameterType="String">
+        delete from t_version where version_id in 
+        <foreach item="versionId" collection="array" open="(" separator="," close=")">
+            #{versionId}
+        </foreach>
+    </delete>
+</mapper>
