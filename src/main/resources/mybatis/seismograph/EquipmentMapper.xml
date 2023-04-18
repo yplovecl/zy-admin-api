@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.seismograph.mapper.EquipmentMapper">
+    
+    <resultMap type="Equipment" id="EquipmentResult">
+        <result property="equipmentId"    column="equipment_id"    />
+        <result property="equipmentIdentity"    column="equipment_identity"    />
+        <result property="enterpriseId"    column="enterprise_id"    />
+        <result property="firstUseTime"    column="first_use_time"    />
+        <result property="accumulativeUseTime"    column="accumulative_use_time"    />
+        <result property="siteNo"    column="site_no"    />
+        <result property="siteName"    column="site_name"    />
+        <result property="deployer"    column="deployer"    />
+        <result property="siteLoc"    column="site_loc"    />
+        <result property="siteLocLon"    column="site_loc_lon"    />
+        <result property="siteLocLat"    column="site_loc_lat"    />
+        <result property="siteImageUri"    column="site_image_uri"    />
+        <result property="siteVideoUri"    column="site_video_uri"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectEquipmentVo">
+        select equipment_id, equipment_identity, enterprise_id, first_use_time, accumulative_use_time, site_no, site_name, deployer, site_loc, site_loc_lon, site_loc_lat, site_image_uri, site_video_uri, remark, create_time, update_time from t_equipment
+    </sql>
+
+    <select id="selectEquipmentList" parameterType="Equipment" resultMap="EquipmentResult">
+        <include refid="selectEquipmentVo"/>
+        <where>  
+            <if test="equipmentIdentity != null  and equipmentIdentity != ''"> and equipment_identity = #{equipmentIdentity}</if>
+            <if test="enterpriseId != null "> and enterprise_id = #{enterpriseId}</if>
+            <if test="siteNo != null  and siteNo != ''"> and site_no like concat('%', #{siteNo}, '%')</if>
+            <if test="siteName != null  and siteName != ''"> and site_name like concat('%', #{siteName}, '%')</if>
+            <if test="deployer != null  and deployer != ''"> and deployer like concat('%', #{deployer}, '%')</if>
+            <if test="siteLoc != null  and siteLoc != ''"> and site_loc like concat('%', #{siteLoc}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectEquipmentByEquipmentId" parameterType="Long" resultMap="EquipmentResult">
+        <include refid="selectEquipmentVo"/>
+        where equipment_id = #{equipmentId}
+    </select>
+        
+    <insert id="insertEquipment" parameterType="Equipment" useGeneratedKeys="true" keyProperty="equipmentId">
+        insert into t_equipment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="equipmentIdentity != null and equipmentIdentity != ''">equipment_identity,</if>
+            <if test="enterpriseId != null">enterprise_id,</if>
+            <if test="firstUseTime != null">first_use_time,</if>
+            <if test="accumulativeUseTime != null">accumulative_use_time,</if>
+            <if test="siteNo != null">site_no,</if>
+            <if test="siteName != null">site_name,</if>
+            <if test="deployer != null">deployer,</if>
+            <if test="siteLoc != null">site_loc,</if>
+            <if test="siteLocLon != null">site_loc_lon,</if>
+            <if test="siteLocLat != null">site_loc_lat,</if>
+            <if test="siteImageUri != null">site_image_uri,</if>
+            <if test="siteVideoUri != null">site_video_uri,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="equipmentIdentity != null and equipmentIdentity != ''">#{equipmentIdentity},</if>
+            <if test="enterpriseId != null">#{enterpriseId},</if>
+            <if test="firstUseTime != null">#{firstUseTime},</if>
+            <if test="accumulativeUseTime != null">#{accumulativeUseTime},</if>
+            <if test="siteNo != null">#{siteNo},</if>
+            <if test="siteName != null">#{siteName},</if>
+            <if test="deployer != null">#{deployer},</if>
+            <if test="siteLoc != null">#{siteLoc},</if>
+            <if test="siteLocLon != null">#{siteLocLon},</if>
+            <if test="siteLocLat != null">#{siteLocLat},</if>
+            <if test="siteImageUri != null">#{siteImageUri},</if>
+            <if test="siteVideoUri != null">#{siteVideoUri},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEquipment" parameterType="Equipment">
+        update t_equipment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="equipmentIdentity != null and equipmentIdentity != ''">equipment_identity = #{equipmentIdentity},</if>
+            <if test="enterpriseId != null">enterprise_id = #{enterpriseId},</if>
+            <if test="firstUseTime != null">first_use_time = #{firstUseTime},</if>
+            <if test="accumulativeUseTime != null">accumulative_use_time = #{accumulativeUseTime},</if>
+            <if test="siteNo != null">site_no = #{siteNo},</if>
+            <if test="siteName != null">site_name = #{siteName},</if>
+            <if test="deployer != null">deployer = #{deployer},</if>
+            <if test="siteLoc != null">site_loc = #{siteLoc},</if>
+            <if test="siteLocLon != null">site_loc_lon = #{siteLocLon},</if>
+            <if test="siteLocLat != null">site_loc_lat = #{siteLocLat},</if>
+            <if test="siteImageUri != null">site_image_uri = #{siteImageUri},</if>
+            <if test="siteVideoUri != null">site_video_uri = #{siteVideoUri},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where equipment_id = #{equipmentId}
+    </update>
+
+    <delete id="deleteEquipmentByEquipmentId" parameterType="Long">
+        delete from t_equipment where equipment_id = #{equipmentId}
+    </delete>
+
+    <delete id="deleteEquipmentByEquipmentIds" parameterType="String">
+        delete from t_equipment where equipment_id in 
+        <foreach item="equipmentId" collection="array" open="(" separator="," close=")">
+            #{equipmentId}
+        </foreach>
+    </delete>
+</mapper>
