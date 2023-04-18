@@ -74,6 +74,7 @@ public class HttpUtils
             URLConnection connection = realUrl.openConnection();
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
+            connection.setRequestProperty("Authorization", "Basic NmE5ZjE0MWE5YTM2ZTU1Zjp3THpNT3YwT1RXWms5QmhLYWlpUEJzallCYlpBNkMwbk1nQzJDOUNRTUZpeUg=");
             connection.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
             connection.connect();
             in = new BufferedReader(new InputStreamReader(connection.getInputStream(), contentType));

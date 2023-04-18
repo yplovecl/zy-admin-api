@@ -69,6 +69,8 @@ public class Equipment extends BaseEntity
     @Excel(name = "站点视频")
     private String siteVideoUri;
 
+    private String online;
+
     public void setEquipmentId(Long equipmentId) 
     {
         this.equipmentId = equipmentId;
@@ -187,6 +189,14 @@ public class Equipment extends BaseEntity
         return siteVideoUri;
     }
 
+    public String getOnline() {
+        return online;
+    }
+
+    public void setOnline(String online) {
+        this.online = online;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -206,6 +216,7 @@ public class Equipment extends BaseEntity
             .append("remark", getRemark())
             .append("createTime", getCreateTime())
             .append("updateTime", getUpdateTime())
+            .append("online", getOnline())
             .toString();
     }
 }

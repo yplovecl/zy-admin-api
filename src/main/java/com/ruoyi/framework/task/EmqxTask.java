@@ -1,0 +1,54 @@
+package com.ruoyi.framework.task;
+
+import com.alibaba.fastjson2.JSONObject;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.http.HttpUtils;
+import com.ruoyi.project.seismograph.service.IEquipmentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+/**
+ * 定时任务调度测试
+ *
+ * @author ruoyi
+ */
+@Component("emqxTask")
+public class EmqxTask {
+
+    private final IEquipmentService equipmentService;
+
+    private static final Logger log = LoggerFactory.getLogger(EmqxTask.class);
+
+    private String emqxUrl = "http://182.43.59.216:10003/api/v5/clients";
+
+    public EmqxTask(IEquipmentService equipmentService) {
+        this.equipmentService = equipmentService;
+    }
+
+
+    public void getClients(Integer page) {
+        String params = StringUtils.format("limit=1000&page={}&node=emqx@172.17.0.5", page);
+        String response = HttpUtils.sendGet(this.emqxUrl, params);
+        log.info(response);
+        if (StringUtils.isNotEmpty(response)) {
+            if (page == 1) {
+                equipmentService.updateEquipmentStatus("N", null);
+            }
+            JSONObject jsonObject = JSONObject.parseObject(response);
+            List<JSONObject> data = jsonObject.getList("data", JSONObject.class);
+            if (!data.isEmpty()) {
+                for (JSONObject item : data) {
+                    System.out.println(item);
+                    equipmentService.updateEquipmentStatus("Y", item.getString("clientid"));
+                }
+            }
+            JSONObject meta = jsonObject.getJSONObject("meta");
+            if (meta.getBooleanValue("hasnext")) {
+                this.getClients(page + 1);
+            }
+        }
+    }
+}

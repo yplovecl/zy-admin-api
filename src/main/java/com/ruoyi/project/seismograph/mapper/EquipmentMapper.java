@@ -1,6 +1,8 @@
 package com.ruoyi.project.seismograph.mapper;
 
 import java.util.List;
+
+import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.project.seismograph.domain.Equipment;
 
 /**
@@ -42,6 +44,8 @@ public interface EquipmentMapper
      * @return 结果
      */
     public int updateEquipment(Equipment equipment);
+
+    public int updateEquipmentStatus(JSONObject jsonObject);
 
     /**
      * 删除设备

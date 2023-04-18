@@ -1,6 +1,8 @@
 package com.ruoyi.project.seismograph.service.impl;
 
 import java.util.List;
+
+import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,6 +70,14 @@ public class EquipmentServiceImpl implements IEquipmentService
     {
         equipment.setUpdateTime(DateUtils.getNowDate());
         return equipmentMapper.updateEquipment(equipment);
+    }
+
+    @Override
+    public int updateEquipmentStatus(String online, String equipmentIdentity) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("online", online);
+        jsonObject.put("equipmentIdentity", equipmentIdentity);
+        return equipmentMapper.updateEquipmentStatus(jsonObject);
     }
 
     /**
