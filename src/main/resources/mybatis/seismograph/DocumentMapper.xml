@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.seismograph.mapper.DocumentMapper">
+    
+    <resultMap type="Document" id="DocumentResult">
+        <result property="documentMgtId"    column="document_mgt_id"    />
+        <result property="type"    column="type"    />
+        <result property="equipmentSeries"    column="equipment_series"    />
+        <result property="equipmentIdentity"    column="equipment_identity"    />
+        <result property="documentName"    column="document_name"    />
+        <result property="documentUri"    column="document_uri"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectDocumentVo">
+        select document_mgt_id, type, equipment_series, equipment_identity, document_name, document_uri, create_time, update_time from t_document_mgt
+    </sql>
+
+    <select id="selectDocumentList" parameterType="Document" resultMap="DocumentResult">
+        <include refid="selectDocumentVo"/>
+        <where>  
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="equipmentSeries != null  and equipmentSeries != ''"> and equipment_series like concat('%', #{equipmentSeries}, '%')</if>
+            <if test="equipmentIdentity != null  and equipmentIdentity != ''"> and equipment_identity like concat('%', #{equipmentIdentity}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectDocumentByDocumentMgtId" parameterType="Long" resultMap="DocumentResult">
+        <include refid="selectDocumentVo"/>
+        where document_mgt_id = #{documentMgtId}
+    </select>
+        
+    <insert id="insertDocument" parameterType="Document" useGeneratedKeys="true" keyProperty="documentMgtId">
+        insert into t_document_mgt
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type != null and type != ''">type,</if>
+            <if test="equipmentSeries != null">equipment_series,</if>
+            <if test="equipmentIdentity != null">equipment_identity,</if>
+            <if test="documentName != null and documentName != ''">document_name,</if>
+            <if test="documentUri != null and documentUri != ''">document_uri,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null and type != ''">#{type},</if>
+            <if test="equipmentSeries != null">#{equipmentSeries},</if>
+            <if test="equipmentIdentity != null">#{equipmentIdentity},</if>
+            <if test="documentName != null and documentName != ''">#{documentName},</if>
+            <if test="documentUri != null and documentUri != ''">#{documentUri},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDocument" parameterType="Document">
+        update t_document_mgt
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null and type != ''">type = #{type},</if>
+            <if test="equipmentSeries != null">equipment_series = #{equipmentSeries},</if>
+            <if test="equipmentIdentity != null">equipment_identity = #{equipmentIdentity},</if>
+            <if test="documentName != null and documentName != ''">document_name = #{documentName},</if>
+            <if test="documentUri != null and documentUri != ''">document_uri = #{documentUri},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where document_mgt_id = #{documentMgtId}
+    </update>
+
+    <delete id="deleteDocumentByDocumentMgtId" parameterType="Long">
+        delete from t_document_mgt where document_mgt_id = #{documentMgtId}
+    </delete>
+
+    <delete id="deleteDocumentByDocumentMgtIds" parameterType="String">
+        delete from t_document_mgt where document_mgt_id in 
+        <foreach item="documentMgtId" collection="array" open="(" separator="," close=")">
+            #{documentMgtId}
+        </foreach>
+    </delete>
+</mapper>
