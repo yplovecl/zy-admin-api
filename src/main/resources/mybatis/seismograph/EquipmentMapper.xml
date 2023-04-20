@@ -8,6 +8,7 @@
         <result property="equipmentId" column="equipment_id"/>
         <result property="equipmentIdentity" column="equipment_identity"/>
         <result property="enterpriseId" column="enterprise_id"/>
+        <result property="enterpriseName" column="enterprise_name"/>
         <result property="firstUseTime" column="first_use_time"/>
         <result property="accumulativeUseTime" column="accumulative_use_time"/>
         <result property="siteNo" column="site_no"/>
@@ -27,7 +28,8 @@
     <sql id="selectEquipmentVo">
         select equipment_id,
                equipment_identity,
-               enterprise_id,
+               t_equipment.enterprise_id,
+               t_enterprise.name as enterprise_name,
                first_use_time,
                accumulative_use_time,
                site_no,
@@ -40,9 +42,9 @@
                site_image_uri,
                site_video_uri,
                remark,
-               create_time,
-               update_time
-        from t_equipment
+               t_equipment.create_time,
+               t_equipment.update_time
+        from t_equipment left join t_enterprise on t_equipment.enterprise_id = t_enterprise.enterprise_id
     </sql>
 
     <select id="selectEquipmentList" parameterType="Equipment" resultMap="EquipmentResult">
@@ -51,7 +53,7 @@
             <if test="equipmentIdentity != null  and equipmentIdentity != ''">and equipment_identity =
                 #{equipmentIdentity}
             </if>
-            <if test="enterpriseId != null ">and enterprise_id = #{enterpriseId}</if>
+            <if test="enterpriseId != null ">and t_equipment.enterprise_id = #{enterpriseId}</if>
             <if test="online != null  and online != ''">and online = #{online}</if>
             <if test="siteNo != null  and siteNo != ''">and site_no like concat('%', #{siteNo}, '%')</if>
             <if test="siteName != null  and siteName != ''">and site_name like concat('%', #{siteName}, '%')</if>
