@@ -6,6 +6,7 @@ import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.project.seismograph.service.IEquipmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,7 +23,8 @@ public class EmqxTask {
 
     private static final Logger log = LoggerFactory.getLogger(EmqxTask.class);
 
-    private String emqxUrl = "http://182.43.59.216:10003/api/v5/clients";
+    @Value("${ruoyi.emqxUrl}")
+    private String emqxUrl = "http://182.43.59.216:10003";
 
     public EmqxTask(IEquipmentService equipmentService) {
         this.equipmentService = equipmentService;
@@ -31,7 +33,7 @@ public class EmqxTask {
 
     public void getClients(Integer page) {
         String params = StringUtils.format("limit=1000&page={}&node=emqx@172.17.0.5", page);
-        String response = HttpUtils.sendGet(this.emqxUrl, params);
+        String response = HttpUtils.sendGet(this.emqxUrl + "/api/v5/clients", params);
         log.info(response);
         if (StringUtils.isNotEmpty(response)) {
             if (page == 1) {

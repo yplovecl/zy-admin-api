@@ -14,6 +14,7 @@ ruoyi:
   addressEnabled: true
   # 验证码类型 math 数组计算 char 字符验证
   captchaType: math
+  emqxUrl: http://182.43.59.216:10003
 # 数据源配置
 spring:
   # redis 配置
