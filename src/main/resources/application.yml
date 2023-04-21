@@ -15,7 +15,7 @@ ruoyi:
   # 验证码类型 math 数组计算 char 字符验证
   captchaType: math
   # emqx url
-  emqxUrl: http://192.168.0.210:10003
+  emqxUrl: http://182.43.59.216:10003
 
 # 开发环境配置
 server:
