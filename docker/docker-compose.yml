@@ -7,9 +7,10 @@ services:
     environment:
       # 时区上海
       TZ: Asia/Shanghai
-    ports:
-      - "8088:80"
-      - "4434:443"
+      SERVER_PORT: 8088
+#    ports:
+#      - "8088:80"
+#      - "4434:443"
     volumes:
       # 证书映射
       - /docker/nginx/cert:/etc/nginx/cert
