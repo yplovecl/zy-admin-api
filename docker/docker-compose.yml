@@ -32,5 +32,6 @@ services:
     volumes:
       # 配置文件
       - /docker/server/logs/:/app/logs/
+      - /docker/server/uploads/:/app/uploads/
     privileged: true
     network_mode: "host"
