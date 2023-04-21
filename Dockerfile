@@ -1,7 +1,7 @@
 #FROM anapsix/alpine-java:8_server-jre_unlimited
 FROM eclipse-temurin:17-jdk-alpine
 
-ENV  LANG="en_US.UTF-8"
+ENV LANG="en_US.UTF-8"
 
 RUN mkdir -p /app/logs /app/temp /app/uploads
 
