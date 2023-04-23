@@ -27,6 +27,11 @@ public class LoginUser implements UserDetails
     private Long deptId;
 
     /**
+     * 企业ID
+     */
+    private Long enterpriseId;
+
+    /**
      * 用户唯一标识
      */
     private String token;
@@ -262,5 +267,13 @@ public class LoginUser implements UserDetails
     public Collection<? extends GrantedAuthority> getAuthorities()
     {
         return null;
+    }
+
+    public Long getEnterpriseId() {
+        return user.getEnterpriseId();
+    }
+
+    public void setEnterpriseId(Long enterpriseId) {
+        this.enterpriseId = enterpriseId;
     }
 }

@@ -3,6 +3,8 @@ package com.ruoyi.project.system.domain;
 import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.*;
+
+import com.ruoyi.project.seismograph.domain.Enterprise;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.xss.Xss;
@@ -28,6 +30,9 @@ public class SysUser extends BaseEntity
     /** 部门ID */
     @Excel(name = "部门编号", type = Type.IMPORT)
     private Long deptId;
+
+    @Excel(name = "企业ID", type = Type.IMPORT)
+    private Long enterpriseId;
 
     /** 用户账号 */
     @Excel(name = "登录名称")
@@ -76,6 +81,12 @@ public class SysUser extends BaseEntity
         @Excel(name = "部门负责人", targetAttr = "leader", type = Type.EXPORT)
     })
     private SysDept dept;
+
+    @Excels({
+            @Excel(name = "企业名称", targetAttr = "name", type = Type.EXPORT),
+            @Excel(name = "企业负责人", targetAttr = "contactPerson", type = Type.EXPORT)
+    })
+    private Enterprise enterprise;
 
     /** 角色对象 */
     private List<SysRole> roles;
@@ -319,6 +330,23 @@ public class SysUser extends BaseEntity
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
             .append("dept", getDept())
+            .append("enterprise", getEnterprise())
             .toString();
+    }
+
+    public Enterprise getEnterprise() {
+        return enterprise;
+    }
+
+    public void setEnterprise(Enterprise enterprise) {
+        this.enterprise = enterprise;
+    }
+
+    public Long getEnterpriseId() {
+        return enterpriseId;
+    }
+
+    public void setEnterpriseId(Long enterpriseId) {
+        this.enterpriseId = enterpriseId;
     }
 }

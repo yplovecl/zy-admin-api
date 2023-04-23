@@ -2,6 +2,8 @@ package com.ruoyi.project.seismograph.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +44,10 @@ public class EquipmentController extends BaseController
     public TableDataInfo list(Equipment equipment)
     {
         startPage();
+        Long enterpriseId = SecurityUtils.getEnterpriseId();
+        if(null != enterpriseId&& enterpriseId.intValue() > 0){
+            equipment.setEnterpriseId(enterpriseId);
+        }
         List<Equipment> list = equipmentService.selectEquipmentList(equipment);
         return getDataTable(list);
     }
@@ -54,6 +60,10 @@ public class EquipmentController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, Equipment equipment)
     {
+        Long enterpriseId = SecurityUtils.getEnterpriseId();
+        if(null != enterpriseId&& enterpriseId.intValue() > 0){
+            equipment.setEnterpriseId(enterpriseId);
+        }
         List<Equipment> list = equipmentService.selectEquipmentList(equipment);
         ExcelUtil<Equipment> util = new ExcelUtil<Equipment>(Equipment.class);
         util.exportExcel(response, list, "设备数据");

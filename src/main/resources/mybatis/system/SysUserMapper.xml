@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="SysUser" id="SysUserResult">
         <id     property="userId"       column="user_id"      />
+        <result property="enterpriseId"       column="enterprise_id"      />
         <result property="deptId"       column="dept_id"      />
         <result property="userName"     column="user_name"    />
         <result property="nickName"     column="nick_name"    />
@@ -24,8 +25,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"   column="update_time"  />
         <result property="remark"       column="remark"       />
         <association property="dept"    column="dept_id" javaType="SysDept" resultMap="deptResult" />
+        <association property="enterprise" column="enterprise_id" javaType="Enterprise" resultMap="enterpriseResult" />
         <collection  property="roles"   javaType="java.util.List"           resultMap="RoleResult" />
     </resultMap>
+
+	<resultMap id="enterpriseResult" type="Enterprise">
+		<result property="enterpriseId"    column="enterprise_id"    />
+		<result property="name"    column="name"    />
+		<result property="abbreviation"    column="abbreviation"    />
+		<result property="mailingAddress"    column="mailing_address"    />
+		<result property="uniformSocialCreditCode"    column="uniform_social_credit_code"    />
+		<result property="contactPerson"    column="contact_person"    />
+		<result property="contactWay"    column="contact_way"    />
+		<result property="enterpriseLevel"    column="enterprise_level"    />
+		<result property="numberOfUsers"    column="number_of_users"    />
+		<result property="useDiskSize"    column="use_disk_size"    />
+		<result property="status"    column="status"    />
+		<result property="createTime"    column="create_time"    />
+		<result property="updateTime"    column="update_time"    />
+	</resultMap>
 	
     <resultMap id="deptResult" type="SysDept">
         <id     property="deptId"    column="dept_id"     />
@@ -47,18 +65,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 	
 	<sql id="selectUserVo">
-        select u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, 
+        select u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, u.enterprise_id,
         d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.status as dept_status,
-        r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status
+        r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status,
+        e.name
         from sys_user u
 		    left join sys_dept d on u.dept_id = d.dept_id
 		    left join sys_user_role ur on u.user_id = ur.user_id
 		    left join sys_role r on r.role_id = ur.role_id
+		    left join t_enterprise e on u.enterprise_id = e.enterprise_id
     </sql>
     
     <select id="selectUserList" parameterType="SysUser" resultMap="SysUserResult">
-		select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, d.dept_name, d.leader from sys_user u
+		select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, d.dept_name, d.leader, u.enterprise_id, e.name from sys_user u
 		left join sys_dept d on u.dept_id = d.dept_id
+		left join t_enterprise e on u.enterprise_id = e.enterprise_id
 		where u.del_flag = '0'
 		<if test="userId != null and userId != 0">
 			AND u.user_id = #{userId}
@@ -145,6 +166,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<insert id="insertUser" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId">
  		insert into sys_user(
  			<if test="userId != null and userId != 0">user_id,</if>
+ 			<if test="enterpriseId != null and enterpriseId != 0">enterprise_id,</if>
  			<if test="deptId != null and deptId != 0">dept_id,</if>
  			<if test="userName != null and userName != ''">user_name,</if>
  			<if test="nickName != null and nickName != ''">nick_name,</if>
@@ -159,6 +181,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			create_time
  		)values(
  			<if test="userId != null and userId != ''">#{userId},</if>
+ 			<if test="enterpriseId != null and enterpriseId != ''">#{enterpriseId},</if>
  			<if test="deptId != null and deptId != ''">#{deptId},</if>
  			<if test="userName != null and userName != ''">#{userName},</if>
  			<if test="nickName != null and nickName != ''">#{nickName},</if>

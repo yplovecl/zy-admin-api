@@ -37,7 +37,7 @@ public class DocumentController extends BaseController
     /**
      * 查询文档管理列表
      */
-    @PreAuthorize("@ss.hasPermi('seismograph:document:list')")
+    @PreAuthorize("@ss.hasAnyPermi('seismograph:manual:list,seismograph:report:list,seismograph:software:list')")
     @GetMapping("/list")
     public TableDataInfo list(Document document)
     {
@@ -49,7 +49,7 @@ public class DocumentController extends BaseController
     /**
      * 导出文档管理列表
      */
-    @PreAuthorize("@ss.hasPermi('seismograph:document:export')")
+    @PreAuthorize("@ss.hasAnyPermi('seismograph:manual:export,seismograph:report:export,seismograph:software:export')")
     @Log(title = "文档管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, Document document)
@@ -62,7 +62,7 @@ public class DocumentController extends BaseController
     /**
      * 获取文档管理详细信息
      */
-    @PreAuthorize("@ss.hasPermi('seismograph:document:query')")
+    @PreAuthorize("@ss.hasAnyPermi('seismograph:manual:query,seismograph:report:query,seismograph:software:query')")
     @GetMapping(value = "/{documentMgtId}")
     public AjaxResult getInfo(@PathVariable("documentMgtId") Long documentMgtId)
     {
@@ -72,7 +72,7 @@ public class DocumentController extends BaseController
     /**
      * 新增文档管理
      */
-    @PreAuthorize("@ss.hasPermi('seismograph:document:add')")
+    @PreAuthorize("@ss.hasAnyPermi('seismograph:manual:add,seismograph:report:add,seismograph:software:add')")
     @Log(title = "文档管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Document document)
@@ -83,7 +83,7 @@ public class DocumentController extends BaseController
     /**
      * 修改文档管理
      */
-    @PreAuthorize("@ss.hasPermi('seismograph:document:edit')")
+    @PreAuthorize("@ss.hasAnyPermi('seismograph:manual:edit,seismograph:report:edit,seismograph:software:edit')")
     @Log(title = "文档管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody Document document)
@@ -94,7 +94,7 @@ public class DocumentController extends BaseController
     /**
      * 删除文档管理
      */
-    @PreAuthorize("@ss.hasPermi('seismograph:document:remove')")
+    @PreAuthorize("@ss.hasAnyPermi('seismograph:manual:remove,seismograph:report:remove,seismograph:software:remove')")
     @Log(title = "文档管理", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{documentMgtIds}")
     public AjaxResult remove(@PathVariable Long[] documentMgtIds)

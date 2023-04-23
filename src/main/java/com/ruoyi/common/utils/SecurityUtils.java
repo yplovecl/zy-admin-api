@@ -1,15 +1,15 @@
 package com.ruoyi.common.utils;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.framework.security.LoginUser;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  * 安全服务工具类
- * 
+ *
  * @author ruoyi
  */
 public class SecurityUtils
@@ -27,6 +27,18 @@ public class SecurityUtils
         catch (Exception e)
         {
             throw new ServiceException("获取用户ID异常", HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    public static Long getEnterpriseId()
+    {
+        try
+        {
+            return getLoginUser().getEnterpriseId();
+        }
+        catch (Exception e)
+        {
+            throw new ServiceException("获取企业ID异常", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -110,7 +122,7 @@ public class SecurityUtils
 
     /**
      * 是否为管理员
-     * 
+     *
      * @param userId 用户ID
      * @return 结果
      */
