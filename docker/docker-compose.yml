@@ -7,10 +7,10 @@ services:
     environment:
       # 时区上海
       TZ: Asia/Shanghai
-      SERVER_PORT: 8088
-#    ports:
-#      - "8088:80"
-#      - "4434:443"
+    depends_on:
+      - zy-server
+    ports:
+      - "8088:80"
     volumes:
       # 证书映射
       - /docker/nginx/cert:/etc/nginx/cert
@@ -21,7 +21,7 @@ services:
       # 日志目录
       - /docker/nginx/log:/var/log/nginx
     privileged: true
-    network_mode: "host"
+    network_mode: "bridge"
 
   zy-server:
     image: pange/zy-server:3.8.5
@@ -35,4 +35,4 @@ services:
       - /docker/server/logs/:/app/logs/
       - /docker/server/uploads/:/app/uploads/
     privileged: true
-    network_mode: "host"
+    network_mode: "bridge"
