@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.seismograph.mapper.FirmwareMapper">
+    
+    <resultMap type="Firmware" id="FirmwareResult">
+        <result property="firmwareId"    column="firmware_id"    />
+        <result property="firmwareType"    column="firmware_type"    />
+        <result property="version"    column="version"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="fileHash"    column="file_hash"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectFirmwareVo">
+        select firmware_id, firmware_type, version, file_path, file_hash, remark, create_by, create_time, update_by, update_time from t_firmware
+    </sql>
+
+    <select id="selectFirmwareList" parameterType="Firmware" resultMap="FirmwareResult">
+        <include refid="selectFirmwareVo"/>
+        <where>  
+            <if test="firmwareType != null "> and firmware_type = #{firmwareType}</if>
+            <if test="version != null  and version != ''"> and version like concat('%', #{version}, '%')</if>
+            <if test="fileHash != null  and fileHash != ''"> and file_hash like concat('%', #{fileHash}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectFirmwareByFirmwareId" parameterType="String" resultMap="FirmwareResult">
+        <include refid="selectFirmwareVo"/>
+        where firmware_id = #{firmwareId}
+    </select>
+        
+    <insert id="insertFirmware" parameterType="Firmware" useGeneratedKeys="true" keyProperty="firmwareId">
+        insert into t_firmware
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="firmwareType != null">firmware_type,</if>
+            <if test="version != null and version != ''">version,</if>
+            <if test="filePath != null and filePath != ''">file_path,</if>
+            <if test="fileHash != null and fileHash != ''">file_hash,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="firmwareType != null">#{firmwareType},</if>
+            <if test="version != null and version != ''">#{version},</if>
+            <if test="filePath != null and filePath != ''">#{filePath},</if>
+            <if test="fileHash != null and fileHash != ''">#{fileHash},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFirmware" parameterType="Firmware">
+        update t_firmware
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="firmwareType != null">firmware_type = #{firmwareType},</if>
+            <if test="version != null and version != ''">version = #{version},</if>
+            <if test="filePath != null and filePath != ''">file_path = #{filePath},</if>
+            <if test="fileHash != null and fileHash != ''">file_hash = #{fileHash},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where firmware_id = #{firmwareId}
+    </update>
+
+    <delete id="deleteFirmwareByFirmwareId" parameterType="String">
+        delete from t_firmware where firmware_id = #{firmwareId}
+    </delete>
+
+    <delete id="deleteFirmwareByFirmwareIds" parameterType="String">
+        delete from t_firmware where firmware_id in 
+        <foreach item="firmwareId" collection="array" open="(" separator="," close=")">
+            #{firmwareId}
+        </foreach>
+    </delete>
+</mapper>
