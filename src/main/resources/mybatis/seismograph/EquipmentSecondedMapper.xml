@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.seismograph.mapper.EquipmentSecondedMapper">
+    
+    <resultMap type="EquipmentSeconded" id="EquipmentSecondedResult">
+        <result property="equipmentSecondedId"    column="equipment_seconded_id"    />
+        <result property="equipmentIdentity"    column="equipment_identity"    />
+        <result property="fromEnterpriseId"    column="from_enterprise_id"    />
+        <result property="toEnterpriseId"    column="to_enterprise_id"    />
+        <result property="isSeconded"    column="is_seconded"    />
+        <result property="remark"    column="remark"    />
+        <result property="returnTime"    column="return_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectEquipmentSecondedVo">
+        select equipment_seconded_id, equipment_identity, from_enterprise_id, to_enterprise_id, is_seconded, remark, return_time, create_time, update_time from t_equipment_seconded
+    </sql>
+
+    <select id="selectEquipmentSecondedList" parameterType="EquipmentSeconded" resultMap="EquipmentSecondedResult">
+        <include refid="selectEquipmentSecondedVo"/>
+        <where>  
+            <if test="equipmentIdentity != null  and equipmentIdentity != ''"> and equipment_identity = #{equipmentIdentity}</if>
+            <if test="fromEnterpriseId != null "> and from_enterprise_id = #{fromEnterpriseId}</if>
+            <if test="toEnterpriseId != null "> and to_enterprise_id = #{toEnterpriseId}</if>
+            <if test="isSeconded != null  and isSeconded != ''"> and is_seconded = #{isSeconded}</if>
+            <if test="params.beginReturnTime != null and params.beginReturnTime != '' and params.endReturnTime != null and params.endReturnTime != ''"> and return_time between #{params.beginReturnTime} and #{params.endReturnTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectEquipmentSecondedByEquipmentSecondedId" parameterType="Long" resultMap="EquipmentSecondedResult">
+        <include refid="selectEquipmentSecondedVo"/>
+        where equipment_seconded_id = #{equipmentSecondedId}
+    </select>
+        
+    <insert id="insertEquipmentSeconded" parameterType="EquipmentSeconded" useGeneratedKeys="true" keyProperty="equipmentSecondedId">
+        insert into t_equipment_seconded
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="equipmentIdentity != null and equipmentIdentity != ''">equipment_identity,</if>
+            <if test="fromEnterpriseId != null">from_enterprise_id,</if>
+            <if test="toEnterpriseId != null">to_enterprise_id,</if>
+            <if test="isSeconded != null and isSeconded != ''">is_seconded,</if>
+            <if test="remark != null">remark,</if>
+            <if test="returnTime != null">return_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="equipmentIdentity != null and equipmentIdentity != ''">#{equipmentIdentity},</if>
+            <if test="fromEnterpriseId != null">#{fromEnterpriseId},</if>
+            <if test="toEnterpriseId != null">#{toEnterpriseId},</if>
+            <if test="isSeconded != null and isSeconded != ''">#{isSeconded},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="returnTime != null">#{returnTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEquipmentSeconded" parameterType="EquipmentSeconded">
+        update t_equipment_seconded
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="equipmentIdentity != null and equipmentIdentity != ''">equipment_identity = #{equipmentIdentity},</if>
+            <if test="fromEnterpriseId != null">from_enterprise_id = #{fromEnterpriseId},</if>
+            <if test="toEnterpriseId != null">to_enterprise_id = #{toEnterpriseId},</if>
+            <if test="isSeconded != null and isSeconded != ''">is_seconded = #{isSeconded},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="returnTime != null">return_time = #{returnTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where equipment_seconded_id = #{equipmentSecondedId}
+    </update>
+
+    <delete id="deleteEquipmentSecondedByEquipmentSecondedId" parameterType="Long">
+        delete from t_equipment_seconded where equipment_seconded_id = #{equipmentSecondedId}
+    </delete>
+
+    <delete id="deleteEquipmentSecondedByEquipmentSecondedIds" parameterType="String">
+        delete from t_equipment_seconded where equipment_seconded_id in 
+        <foreach item="equipmentSecondedId" collection="array" open="(" separator="," close=")">
+            #{equipmentSecondedId}
+        </foreach>
+    </delete>
+</mapper>
