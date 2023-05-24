@@ -19,6 +19,8 @@ public interface IEquipmentService {
      */
     public Equipment selectEquipmentByEquipmentId(Long equipmentId);
 
+    public Equipment selectByEquipmentIdentity(String equipmentIdentity);
+
     /**
      * 查询设备列表
      *

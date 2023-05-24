@@ -67,6 +67,11 @@
         where equipment_id = #{equipmentId}
     </select>
 
+    <select id="selectByEquipmentIdentity" parameterType="String" resultMap="EquipmentResult">
+        <include refid="selectEquipmentVo"/>
+        where equipment_identity = #{equipmentIdentity}
+    </select>
+
     <insert id="insertEquipment" parameterType="Equipment" useGeneratedKeys="true" keyProperty="equipmentId">
         insert into t_equipment
         <trim prefix="(" suffix=")" suffixOverrides=",">

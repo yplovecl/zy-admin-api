@@ -37,7 +37,7 @@ public class EnterpriseController extends BaseController
     /**
      * 查询企业列表
      */
-    @PreAuthorize("@ss.hasPermi('seismograph:enterprise:list')")
+    @PreAuthorize("@ss.hasAnyPermi('seismograph:enterprise:list,seismograph:equipment:seconded')")
     @GetMapping("/list")
     public TableDataInfo list(Enterprise enterprise)
     {

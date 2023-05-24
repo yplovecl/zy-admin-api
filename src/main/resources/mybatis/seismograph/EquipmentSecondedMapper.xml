@@ -35,6 +35,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectEquipmentSecondedVo"/>
         where equipment_seconded_id = #{equipmentSecondedId}
     </select>
+
+    <select id="selectByEquipmentIdentity" parameterType="String" resultMap="EquipmentSecondedResult">
+        <include refid="selectEquipmentSecondedVo"/>
+        where equipment_identity = #{equipmentIdentity} order by equipment_seconded_id desc limit 1
+    </select>
         
     <insert id="insertEquipmentSeconded" parameterType="EquipmentSeconded" useGeneratedKeys="true" keyProperty="equipmentSecondedId">
         insert into t_equipment_seconded

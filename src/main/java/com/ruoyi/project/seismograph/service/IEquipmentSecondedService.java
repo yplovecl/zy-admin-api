@@ -19,6 +19,8 @@ public interface IEquipmentSecondedService
      */
     public EquipmentSeconded selectEquipmentSecondedByEquipmentSecondedId(Long equipmentSecondedId);
 
+    public EquipmentSeconded selectByEquipmentIdentity(String equipmentIdentity);
+
     /**
      * 查询设备借调日志列表
      * 
