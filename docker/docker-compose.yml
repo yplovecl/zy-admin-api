@@ -10,6 +10,7 @@ services:
       - zyserver
     ports:
       - "8088:80"
+      - "8000:81"
     volumes:
       # 证书映射
       - /docker/nginx/cert:/etc/nginx/cert
@@ -19,6 +20,8 @@ services:
       - /docker/nginx/html:/usr/share/nginx/html
       # 日志目录
       - /docker/nginx/log:/var/log/nginx
+      # 文件目录
+      - /docker/server/uploads/:/opt/
     privileged: true
 #    network_mode: "bridge"
 
