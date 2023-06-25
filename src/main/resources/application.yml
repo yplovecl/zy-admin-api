@@ -12,7 +12,7 @@ ruoyi:
   profile: D:/ruoyi/uploadPath
   # 获取ip地址开关
   addressEnabled: true
-  # 验证码类型 math 数组计算 char 字符验证
+  # 验证码类型 math 数字计算 char 字符验证
   captchaType: math
   # emqx url
   emqxUrl: http://182.43.59.216:10003
