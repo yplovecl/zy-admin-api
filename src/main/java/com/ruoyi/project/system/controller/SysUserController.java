@@ -66,6 +66,10 @@ public class SysUserController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SysUser user)
     {
+        Long enterpriseId = SecurityUtils.getEnterpriseId();
+        if (null != enterpriseId && enterpriseId.intValue() > 0) {
+            user.setEnterpriseId(enterpriseId);
+        }
         startPage();
         List<SysUser> list = userService.selectUserList(user);
         return getDataTable(list);
@@ -76,6 +80,10 @@ public class SysUserController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, SysUser user)
     {
+        Long enterpriseId = SecurityUtils.getEnterpriseId();
+        if (null != enterpriseId && enterpriseId.intValue() > 0) {
+            user.setEnterpriseId(enterpriseId);
+        }
         List<SysUser> list = userService.selectUserList(user);
         ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
         util.exportExcel(response, list, "用户数据");
@@ -142,6 +150,10 @@ public class SysUserController extends BaseController
         else if (StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user))
         {
             return error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+        }
+        Long enterpriseId = SecurityUtils.getEnterpriseId();
+        if (null != enterpriseId && enterpriseId.intValue() > 0) {
+            user.setEnterpriseId(enterpriseId);
         }
         user.setCreateBy(getUsername());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));

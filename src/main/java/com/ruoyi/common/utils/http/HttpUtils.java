@@ -17,6 +17,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
+import com.ruoyi.common.utils.sign.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ruoyi.common.constant.Constants;
@@ -51,7 +53,13 @@ public class HttpUtils
      */
     public static String sendGet(String url, String param)
     {
-        return sendGet(url, param, Constants.UTF8);
+        return sendGet(url, param, Constants.UTF8, false);
+    }
+
+
+    public static String sendGet(String url, String param, String contentType)
+    {
+        return sendGet(url, param, contentType, false);
     }
 
     /**
@@ -62,7 +70,7 @@ public class HttpUtils
      * @param contentType 编码类型
      * @return 所代表远程资源的响应结果
      */
-    public static String sendGet(String url, String param, String contentType)
+    public static String sendGet(String url, String param, String contentType, boolean emqxAuth)
     {
         StringBuilder result = new StringBuilder();
         BufferedReader in = null;
@@ -74,7 +82,11 @@ public class HttpUtils
             URLConnection connection = realUrl.openConnection();
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
-            connection.setRequestProperty("Authorization", "Basic NmE5ZjE0MWE5YTM2ZTU1Zjp3THpNT3YwT1RXWms5QmhLYWlpUEJzallCYlpBNkMwbk1nQzJDOUNRTUZpeUg=");
+            if(emqxAuth){
+//                Credentials.basic("35677a1611be3b7c", "22TXOxW9BaGeUPjMRuwQdC168uZP9BUVd9C9CJ7UsNjFEHA");
+                String authHeader = Base64.encode("35677a1611be3b7c:22TXOxW9BaGeUPjMRuwQdC168uZP9BUVd9C9CJ7UsNjFEHA".getBytes());
+                connection.setRequestProperty("Authorization", "Basic " + authHeader);
+            }
             connection.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
             connection.connect();
             in = new BufferedReader(new InputStreamReader(connection.getInputStream(), contentType));
