@@ -47,8 +47,8 @@ public class EmqxTask {
             List<JSONObject> data = jsonObject.getList("data", JSONObject.class);
             if (!data.isEmpty()) {
                 for (JSONObject item : data) {
-                    System.out.println(item);
-                    equipmentService.updateEquipmentStatus("Y", item.getString("clientid"));
+                    if (item.getBooleanValue("connected"))
+                        equipmentService.updateEquipmentStatus("Y", item.getString("clientid"));
                 }
             }
             JSONObject meta = jsonObject.getJSONObject("meta");
