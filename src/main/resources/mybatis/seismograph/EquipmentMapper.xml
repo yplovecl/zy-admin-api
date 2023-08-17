@@ -59,7 +59,7 @@
             <if test="siteName != null  and siteName != ''">and site_name like concat('%', #{siteName}, '%')</if>
             <if test="deployer != null  and deployer != ''">and deployer like concat('%', #{deployer}, '%')</if>
             <if test="siteLoc != null  and siteLoc != ''">and site_loc like concat('%', #{siteLoc}, '%')</if>
-        </where>
+        </where> order by equipment_id desc
     </select>
 
     <select id="selectEquipmentByEquipmentId" parameterType="Long" resultMap="EquipmentResult">
