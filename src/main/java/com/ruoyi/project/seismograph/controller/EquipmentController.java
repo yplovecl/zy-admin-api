@@ -12,6 +12,7 @@ import com.ruoyi.project.seismograph.domain.Equipment;
 import com.ruoyi.project.seismograph.domain.EquipmentSeconded;
 import com.ruoyi.project.seismograph.service.IEquipmentSecondedService;
 import com.ruoyi.project.seismograph.service.IEquipmentService;
+import com.ruoyi.project.seismograph.utils.ApiRequestUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -75,20 +76,24 @@ public class EquipmentController extends BaseController {
     @GetMapping(value = "/{equipmentId}")
     public AjaxResult getInfo(@PathVariable("equipmentId") Long equipmentId) {
         Equipment equipment = equipmentService.selectEquipmentByEquipmentId(equipmentId);
+        if (ObjectUtils.isEmpty(equipment)) {
+            return error("设备不存在");
+        }
         Long enterpriseId = SecurityUtils.getEnterpriseId();
         if (null != enterpriseId && !enterpriseId.equals(equipment.getEnterpriseId())) {
             return error("设备不存在");
         }
-        if (ObjectUtils.isNotEmpty(equipment)) {
-            EquipmentSeconded seconded = equipmentSecondedService.selectByEquipmentIdentity(equipment.getEquipmentIdentity());
-            if (ObjectUtils.isNotEmpty(seconded)) {
-                JSONObject jsonObject = JSONObject.from(equipment);
-                jsonObject.put("isSeconded", seconded.getIsSeconded());
-                jsonObject.put("returnTime",  new SimpleDateFormat("yyyy-MM-dd").format(seconded.getReturnTime()));
-                return success(jsonObject);
-            }
+        JSONObject jsonObject = JSONObject.from(equipment);
+        EquipmentSeconded seconded = equipmentSecondedService.selectByEquipmentIdentity(equipment.getEquipmentIdentity());
+        if (ObjectUtils.isNotEmpty(seconded)) {
+            jsonObject.put("isSeconded", seconded.getIsSeconded());
+            jsonObject.put("returnTime", new SimpleDateFormat("yyyy-MM-dd").format(seconded.getReturnTime()));
         }
-        return success(equipment);
+        JSONObject result = ApiRequestUtils.get5gPayload(equipment.getEquipmentIdentity());
+        if (ObjectUtils.isNotEmpty(result)) {
+            jsonObject.put("payload", result);
+        }
+        return success(jsonObject);
     }
 
     /**
@@ -128,7 +133,8 @@ public class EquipmentController extends BaseController {
     public AjaxResult seconded(@RequestBody EquipmentSeconded equipmentSeconded) {
         Long enterpriseId = SecurityUtils.getEnterpriseId();
         Equipment equipment = equipmentService.selectByEquipmentIdentity(equipmentSeconded.getEquipmentIdentity());
-        if (ObjectUtils.isEmpty(equipment) || !Objects.equals(equipment.getEnterpriseId(), enterpriseId)) return error("设备不存在");
+        if (ObjectUtils.isEmpty(equipment) || !Objects.equals(equipment.getEnterpriseId(), enterpriseId))
+            return error("设备不存在");
 
         EquipmentSeconded seconded = equipmentSecondedService.selectByEquipmentIdentity(equipmentSeconded.getEquipmentIdentity());
         if (ObjectUtils.isNotEmpty(seconded) && "N".equals(seconded.getIsSeconded())) return error("设备未归还");
@@ -150,7 +156,8 @@ public class EquipmentController extends BaseController {
     public AjaxResult returnEquipment(@RequestBody EquipmentSeconded equipmentSeconded) {
         Long enterpriseId = SecurityUtils.getEnterpriseId();
         Equipment equipment = equipmentService.selectByEquipmentIdentity(equipmentSeconded.getEquipmentIdentity());
-        if (ObjectUtils.isEmpty(equipment) || !Objects.equals(equipment.getEnterpriseId(), enterpriseId)) return error("设备不存在");
+        if (ObjectUtils.isEmpty(equipment) || !Objects.equals(equipment.getEnterpriseId(), enterpriseId))
+            return error("设备不存在");
 
         EquipmentSeconded seconded = equipmentSecondedService.selectByEquipmentIdentity(equipmentSeconded.getEquipmentIdentity());
         if (ObjectUtils.isEmpty(seconded) || "Y".equals(seconded.getIsSeconded())) return error("该设备无需归还");

@@ -211,6 +211,12 @@
             <version>${commons.collections.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>cn.zhxu</groupId>
+            <artifactId>okhttps</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+
         <!-- 定时任务 -->
         <dependency>
             <groupId>org.quartz-scheduler</groupId>

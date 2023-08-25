@@ -59,6 +59,7 @@
             <if test="siteName != null  and siteName != ''">and site_name like concat('%', #{siteName}, '%')</if>
             <if test="deployer != null  and deployer != ''">and deployer like concat('%', #{deployer}, '%')</if>
             <if test="siteLoc != null  and siteLoc != ''">and site_loc like concat('%', #{siteLoc}, '%')</if>
+            <if test="params.map != null">and site_loc_lon is not null and site_loc_lat is not null</if>
         </where> order by equipment_id desc
     </select>
 
