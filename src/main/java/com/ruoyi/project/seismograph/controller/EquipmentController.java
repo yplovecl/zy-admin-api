@@ -5,6 +5,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.aspectj.lang.annotation.Log;
 import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
+import com.ruoyi.framework.interceptor.annotation.RepeatSubmit;
 import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.framework.web.page.TableDataInfo;
@@ -172,6 +173,7 @@ public class EquipmentController extends BaseController {
         return error("设备归还失败，请稍后再试。");
     }
 
+    @RepeatSubmit(interval = 30000, message = "请求过于频繁")
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
     @GetMapping(value = "/sync/{equipmentId}")
     public AjaxResult syncInfo(@PathVariable("equipmentId") Long equipmentId) {
@@ -183,7 +185,7 @@ public class EquipmentController extends BaseController {
         if (null != enterpriseId && !enterpriseId.equals(equipment.getEnterpriseId())) {
             return error("设备不存在");
         }
-        ApiRequestUtils.send5gRoutineCmd(equipment.getEquipmentIdentity());
+        ApiRequestUtils.send5gRoutineCmd(equipment.getEquipmentIdentity(), 100);
         return success();
     }
 }
