@@ -32,10 +32,10 @@ public class ApiRequestUtils {
      */
     public static JSONObject get5gPayload(String deviceId) {
         String url = String.format("%s/mqttService/get5gPayload", urlPrefix);
-        logger.debug(url);
         HttpResult httpResult = OkHttps.sync(url).addUrlPara("clientId", deviceId).get();
-        logger.debug("get5gPayload response body: {}", httpResult.getBody().toString());
-        JSONObject response = JSONObject.parseObject(httpResult.getBody().toString());
+        String body = httpResult.getBody().toString();
+        logger.debug("clientId: {}, get5gPayload result: {}", deviceId, body);
+        JSONObject response = JSONObject.parseObject(body);
         if (StringUtils.isNotEmpty(response)) {
             return response.getJSONObject("data");
         }
@@ -49,10 +49,10 @@ public class ApiRequestUtils {
      */
     public static boolean send5gRoutineCmd(String deviceId, int cmd) {
         String url = String.format("%s/mqttService/send5gRoutineCmd", urlPrefix);
-        logger.info(url);
         HttpResult httpResult = OkHttps.sync(url).addUrlPara("clientId", deviceId).addUrlPara("cmd", cmd).get();
-        logger.debug("send5gRoutineCmd response body: {}", httpResult.getBody().toString());
-        JSONObject response = JSONObject.parseObject(httpResult.getBody().toString());
+        String body = httpResult.getBody().toString();
+        logger.debug("clientId: {}, send5gRoutineCmd result: {}", deviceId, body);
+        JSONObject response = JSONObject.parseObject(body);
         return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
     }
 
@@ -69,12 +69,12 @@ public class ApiRequestUtils {
      * @param body
      * @return
      */
-    public static boolean send5gConfigCmd(JSONObject body) {
+    public static boolean send5gConfigCmd(JSONObject data) {
         String url = String.format("%s/mqttService/send5gConfigCmd", urlPrefix);
-        logger.info(url);
-        HttpResult httpResult = OkHttps.sync(url).addBodyPara(body).post();
-        logger.debug("send5gRoutineCmd response body: {}", httpResult.getBody().toString());
-        JSONObject response = JSONObject.parseObject(httpResult.getBody().toString());
+        HttpResult httpResult = OkHttps.sync(url).addBodyPara(data).post();
+        String body = httpResult.getBody().toString();
+        logger.debug("send5gRoutineCmd, params: {}, result: {}", data.toString(), body);
+        JSONObject response = JSONObject.parseObject(body);
         return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
     }
 }

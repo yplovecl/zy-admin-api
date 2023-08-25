@@ -171,4 +171,19 @@ public class EquipmentController extends BaseController {
         }
         return error("设备归还失败，请稍后再试。");
     }
+
+    @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
+    @GetMapping(value = "/sync/{equipmentId}")
+    public AjaxResult syncInfo(@PathVariable("equipmentId") Long equipmentId) {
+        Equipment equipment = equipmentService.selectEquipmentByEquipmentId(equipmentId);
+        if (ObjectUtils.isEmpty(equipment)) {
+            return error("设备不存在");
+        }
+        Long enterpriseId = SecurityUtils.getEnterpriseId();
+        if (null != enterpriseId && !enterpriseId.equals(equipment.getEnterpriseId())) {
+            return error("设备不存在");
+        }
+        ApiRequestUtils.send5gRoutineCmd(equipment.getEquipmentIdentity());
+        return success();
+    }
 }
