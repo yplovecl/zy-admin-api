@@ -2,9 +2,11 @@ package com.ruoyi.project.seismograph.service.impl;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.project.seismograph.domain.Equipment;
 import com.ruoyi.project.seismograph.mapper.EquipmentMapper;
 import com.ruoyi.project.seismograph.service.IEquipmentService;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -88,7 +90,13 @@ public class EquipmentServiceImpl implements IEquipmentService {
      */
     @Override
     public int deleteEquipmentByEquipmentIds(Long[] equipmentIds) {
-        return equipmentMapper.deleteEquipmentByEquipmentIds(equipmentIds);
+        for (Long equipmentId : equipmentIds) {
+            Equipment equipment = this.selectEquipmentByEquipmentId(equipmentId);
+            if (ObjectUtils.isNotEmpty(equipment) && StringUtils.isNotEmpty(equipment.getEquipmentIdentity())) {
+                this.deleteEquipmentByEquipmentIdentity(equipment.getEquipmentIdentity());
+            }
+        }
+        return 1;
     }
 
     /**
@@ -100,5 +108,14 @@ public class EquipmentServiceImpl implements IEquipmentService {
     @Override
     public int deleteEquipmentByEquipmentId(Long equipmentId) {
         return equipmentMapper.deleteEquipmentByEquipmentId(equipmentId);
+    }
+
+    @Override
+    public int deleteEquipmentByEquipmentIdentity(String equipmentIdentity) {
+        String[] tableList = {"t_document_mgt", "t_equipment_file", "t_equipment_history", "t_equipment_seconded", "t_map_punctuation", "t_equipment"};
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("tableList", tableList);
+        jsonObject.put("equipmentIdentity", equipmentIdentity);
+        return equipmentMapper.deleteEquipmentByEquipmentIdentity(jsonObject);
     }
 }

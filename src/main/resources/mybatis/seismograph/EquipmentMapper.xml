@@ -144,6 +144,12 @@
         where equipment_id = #{equipmentId}
     </delete>
 
+    <delete id="deleteEquipmentByEquipmentIdentity" parameterType="com.alibaba.fastjson2.JSONObject">
+        <foreach collection="tableList" item="tableName" index="index">
+            delete from ${tableName} where equipment_identity = #{equipmentIdentity};
+        </foreach>
+    </delete>
+
     <delete id="deleteEquipmentByEquipmentIds" parameterType="String">
         delete from t_equipment where equipment_id in
         <foreach item="equipmentId" collection="array" open="(" separator="," close=")">

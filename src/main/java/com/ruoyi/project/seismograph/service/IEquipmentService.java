@@ -62,4 +62,6 @@ public interface IEquipmentService {
      * @return 结果
      */
     public int deleteEquipmentByEquipmentId(Long equipmentId);
+
+    public int deleteEquipmentByEquipmentIdentity(String equipmentIdentity);
 }

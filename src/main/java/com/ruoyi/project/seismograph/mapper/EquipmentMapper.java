@@ -57,6 +57,14 @@ public interface EquipmentMapper {
     public int deleteEquipmentByEquipmentId(Long equipmentId);
 
     /**
+     * 删除设备
+     *
+     * @param jsonObject
+     * @return
+     */
+    public int deleteEquipmentByEquipmentIdentity(JSONObject jsonObject);
+
+    /**
      * 批量删除设备
      *
      * @param equipmentIds 需要删除的数据主键集合
