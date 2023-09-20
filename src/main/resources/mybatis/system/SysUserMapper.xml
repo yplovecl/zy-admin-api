@@ -25,8 +25,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"   column="update_time"  />
         <result property="remark"       column="remark"       />
         <association property="dept"    javaType="SysDept"         resultMap="deptResult" />
+		<association property="enterprise" javaType="Enterprise"   resultMap="enterpriseResult" />
         <collection  property="roles"   javaType="java.util.List"  resultMap="RoleResult" />
-        <association property="enterprise" column="enterprise_id" javaType="Enterprise" resultMap="enterpriseResult" />
     </resultMap>
 
 	<resultMap id="enterpriseResult" type="Enterprise">
