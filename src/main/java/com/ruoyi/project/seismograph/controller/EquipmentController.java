@@ -14,6 +14,7 @@ import com.ruoyi.project.seismograph.domain.EquipmentSeconded;
 import com.ruoyi.project.seismograph.service.IEquipmentSecondedService;
 import com.ruoyi.project.seismograph.service.IEquipmentService;
 import com.ruoyi.project.seismograph.utils.ApiRequestUtils;
+import com.ruoyi.project.seismograph.utils.RedisUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,11 +34,17 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/seismograph/equipment")
 public class EquipmentController extends BaseController {
-    @Autowired
-    private IEquipmentService equipmentService;
+    private final IEquipmentService equipmentService;
 
-    @Autowired
-    private IEquipmentSecondedService equipmentSecondedService;
+    private final IEquipmentSecondedService equipmentSecondedService;
+
+    public final RedisUtil rs;
+
+    public EquipmentController(IEquipmentService equipmentService, IEquipmentSecondedService equipmentSecondedService, RedisUtil rs) {
+        this.equipmentService = equipmentService;
+        this.equipmentSecondedService = equipmentSecondedService;
+        this.rs = rs;
+    }
 
     /**
      * 查询设备列表
@@ -186,6 +193,23 @@ public class EquipmentController extends BaseController {
             return error("设备不存在");
         }
         ApiRequestUtils.send5gRoutineCmd(equipment.getEquipmentIdentity(), 100);
+        return success();
+    }
+
+    @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
+    @GetMapping(value = "/waveform/{equipmentId}")
+    public AjaxResult waveform(@PathVariable("equipmentId") Long equipmentId) {
+        Equipment equipment = equipmentService.selectEquipmentByEquipmentId(equipmentId);
+        if (ObjectUtils.isEmpty(equipment)) {
+            return error("设备不存在");
+        }
+        Long enterpriseId = SecurityUtils.getEnterpriseId();
+        if (null != enterpriseId && !enterpriseId.equals(equipment.getEnterpriseId())) {
+            return error("设备不存在");
+        }
+
+        List<?> data = rs.getList("device:store:"+equipment.getEquipmentIdentity());
+        System.out.println(data);
         return success();
     }
 }
