@@ -6,6 +6,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.aspectj.lang.annotation.Log;
 import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
 import com.ruoyi.framework.interceptor.annotation.RepeatSubmit;
+import com.ruoyi.framework.redis.RedisCache;
 import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.framework.web.page.TableDataInfo;
@@ -14,9 +15,7 @@ import com.ruoyi.project.seismograph.domain.EquipmentSeconded;
 import com.ruoyi.project.seismograph.service.IEquipmentSecondedService;
 import com.ruoyi.project.seismograph.service.IEquipmentService;
 import com.ruoyi.project.seismograph.utils.ApiRequestUtils;
-import com.ruoyi.project.seismograph.utils.RedisUtil;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,9 +37,9 @@ public class EquipmentController extends BaseController {
 
     private final IEquipmentSecondedService equipmentSecondedService;
 
-    public final RedisUtil rs;
+    public final RedisCache rs;
 
-    public EquipmentController(IEquipmentService equipmentService, IEquipmentSecondedService equipmentSecondedService, RedisUtil rs) {
+    public EquipmentController(IEquipmentService equipmentService, IEquipmentSecondedService equipmentSecondedService, RedisCache rs) {
         this.equipmentService = equipmentService;
         this.equipmentSecondedService = equipmentSecondedService;
         this.rs = rs;
@@ -208,8 +207,7 @@ public class EquipmentController extends BaseController {
             return error("设备不存在");
         }
 
-        List<?> data = rs.getList("device:store:"+equipment.getEquipmentIdentity());
-        System.out.println(data);
-        return success();
+        List<?> data = rs.getCacheList("device:store:" + equipment.getEquipmentIdentity());
+        return success(data);
     }
 }
