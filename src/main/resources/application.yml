@@ -16,7 +16,7 @@ ruoyi:
   captchaType: math
   # emqx url
   emqxUrl: http://182.43.59.216:10003
-  apiUrlPrefix: http://182.43.59.216:8088
+  apiUrlPrefix: http://182.43.59.216:18088
 
 # 开发环境配置
 server:
