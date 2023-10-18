@@ -3,6 +3,7 @@ package com.ruoyi.project.seismograph.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.framework.aspectj.lang.annotation.Excel;
 import com.ruoyi.framework.web.domain.BaseEntity;
+import io.swagger.models.auth.In;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -97,7 +98,14 @@ public class Equipment extends BaseEntity {
     @Excel(name = "站点视频")
     private String siteVideoUri;
 
+    @Excel(name = "是否在线", readConverterExp = "Y=是,N=否")
     private String online;
+
+    @Excel(name = "带有5G", readConverterExp = "Y=是,N=否")
+    private String have5g;
+
+    @Excel(name = "封包间隔", readConverterExp = "Y=是,N=否")
+    private Integer packetTime;
 
     public void setEquipmentId(Long equipmentId) {
         this.equipmentId = equipmentId;
@@ -217,6 +225,23 @@ public class Equipment extends BaseEntity {
 
     public void setEnterpriseName(String enterpriseName) {
         this.enterpriseName = enterpriseName;
+    }
+
+
+    public String getHave5g() {
+        return have5g;
+    }
+
+    public void setHave5g(String have5g) {
+        this.have5g = have5g;
+    }
+
+    public Integer getPacketTime() {
+        return packetTime;
+    }
+
+    public void setPacketTime(Integer packetTime) {
+        this.packetTime = packetTime;
     }
 
     @Override

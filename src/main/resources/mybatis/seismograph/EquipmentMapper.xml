@@ -23,6 +23,8 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="online" column="online"/>
+        <result property="have5g" column="have5g"/>
+        <result property="packetTime" column="packet_time"/>
     </resultMap>
 
     <sql id="selectEquipmentVo">
@@ -36,6 +38,8 @@
                site_name,
                deployer,
                online,
+               have5g,
+               packet_time,
                site_loc,
                site_loc_lon,
                site_loc_lat,
@@ -55,6 +59,8 @@
             </if>
             <if test="enterpriseId != null ">and t_equipment.enterprise_id = #{enterpriseId}</if>
             <if test="online != null  and online != ''">and online = #{online}</if>
+            <if test="have5g != null  and have5g != ''">and have5g = #{have5g}</if>
+            <if test="packetTime != null  and packetTime != ''">and packet_time = #{packetTime}</if>
             <if test="siteNo != null  and siteNo != ''">and site_no like concat('%', #{siteNo}, '%')</if>
             <if test="siteName != null  and siteName != ''">and site_name like concat('%', #{siteName}, '%')</if>
             <if test="deployer != null  and deployer != ''">and deployer like concat('%', #{deployer}, '%')</if>
@@ -78,6 +84,8 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="equipmentIdentity != null and equipmentIdentity != ''">equipment_identity,</if>
             <if test="online != null and online != ''">online,</if>
+            <if test="have5g != null and have5g != ''">have5g,</if>
+            <if test="packetTime != null and packetTime != ''">packet_time,</if>
             <if test="enterpriseId != null">enterprise_id,</if>
             <if test="firstUseTime != null">first_use_time,</if>
             <if test="accumulativeUseTime != null">accumulative_use_time,</if>
@@ -96,6 +104,8 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="equipmentIdentity != null and equipmentIdentity != ''">#{equipmentIdentity},</if>
             <if test="online != null and online != ''">#{online},</if>
+            <if test="have5g != null and have5g != ''">#{have5g},</if>
+            <if test="packetTime != null and packetTime != ''">#{packetTime},</if>
             <if test="enterpriseId != null">#{enterpriseId},</if>
             <if test="firstUseTime != null">#{firstUseTime},</if>
             <if test="accumulativeUseTime != null">#{accumulativeUseTime},</if>
@@ -120,6 +130,8 @@
                 #{equipmentIdentity},
             </if>
             <if test="online != null and online != ''">online = #{online},</if>
+            <if test="have5g != null and have5g != ''">have5g = #{have5g},</if>
+            <if test="packetTime != null and packetTime != ''">packet_time = #{packetTime},</if>
             <if test="enterpriseId != null">enterprise_id = #{enterpriseId},</if>
             <if test="firstUseTime != null">first_use_time = #{firstUseTime},</if>
             <if test="accumulativeUseTime != null">accumulative_use_time = #{accumulativeUseTime},</if>

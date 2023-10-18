@@ -5,6 +5,7 @@ import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.project.seismograph.service.IEquipmentService;
+import okhttp3.Credentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +37,7 @@ public class EmqxTask {
 
     public void getClients(Integer page) {
 //        35677a1611be3b7c 22TXOxW9BaGeUPjMRuwQdC168uZP9BUVd9C9CJ7UsNjFEHA
-        String params = StringUtils.format("limit=1000&page={}&node=emqx@172.17.0.3", page);
+        String params = StringUtils.format("limit=1000&page={}", page);
         String response = HttpUtils.sendGet(this.emqxUrl + "/api/v5/clients", params, Constants.UTF8, true);
         log.info(response);
         if (StringUtils.isNotEmpty(response)) {
