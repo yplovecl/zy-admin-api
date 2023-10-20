@@ -45,9 +45,9 @@ public class EmqxTask {
 //        35677a1611be3b7c 22TXOxW9BaGeUPjMRuwQdC168uZP9BUVd9C9CJ7UsNjFEHA
         String params = StringUtils.format("limit=1000&page={}", page);
         String emqx = sysConfigService.selectConfigByKey("emqx_user_info");
-        System.out.println(emqx);
+//        System.out.println(emqx);
         emqx = Base64.encode(emqx.getBytes());
-        System.out.println(emqx);
+//        System.out.println(emqx);
         String response = HttpUtils.sendGet(this.emqxUrl + "/api/v5/clients", params, Constants.UTF8, emqx);
         log.info(response);
         if (StringUtils.isNotEmpty(response)) {
