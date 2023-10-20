@@ -16,6 +16,12 @@ ruoyi:
   captchaType: math
   emqxUrl: http://192.168.0.210:10003
   apiUrlPrefix: http://192.168.0.210:18088
+
+logging:
+  level:
+    com.ruoyi: info
+    org.springframework: error
+
 # 数据源配置
 spring:
   # redis 配置
