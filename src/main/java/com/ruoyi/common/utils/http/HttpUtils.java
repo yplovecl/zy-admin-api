@@ -26,7 +26,7 @@ import com.ruoyi.common.utils.StringUtils;
 
 /**
  * 通用http发送方法
- * 
+ *
  * @author ruoyi
  */
 public class HttpUtils
@@ -53,13 +53,13 @@ public class HttpUtils
      */
     public static String sendGet(String url, String param)
     {
-        return sendGet(url, param, Constants.UTF8, false);
+        return sendGet(url, param, Constants.UTF8, null);
     }
 
 
     public static String sendGet(String url, String param, String contentType)
     {
-        return sendGet(url, param, contentType, false);
+        return sendGet(url, param, contentType, null);
     }
 
     /**
@@ -70,7 +70,7 @@ public class HttpUtils
      * @param contentType 编码类型
      * @return 所代表远程资源的响应结果
      */
-    public static String sendGet(String url, String param, String contentType, boolean emqxAuth)
+    public static String sendGet(String url, String param, String contentType, String emqxAuth)
     {
         StringBuilder result = new StringBuilder();
         BufferedReader in = null;
@@ -82,10 +82,9 @@ public class HttpUtils
             URLConnection connection = realUrl.openConnection();
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
-            if(emqxAuth){
-//                Credentials.basic("ddf31ba134670c41", "39A6Zfx2rIyKzAIN5nQ3dVwFzqa5no85OFVd6CFzJ2UG");
-                String authHeader = Base64.encode("42e1686f9ffa2e3a:ivfVUyQzQzVY5W0yPD5gI9Cf3h02VPYz9AKz47gT69B5hC".getBytes());
-                connection.setRequestProperty("Authorization", "Basic " + authHeader);
+            if(StringUtils.isNotEmpty(emqxAuth)){
+//                String authHeader = Base64.encode("42e1686f9ffa2e3a:ivfVUyQzQzVY5W0yPD5gI9Cf3h02VPYz9AKz47gT69B5hC".getBytes());
+                connection.setRequestProperty("Authorization", "Basic " + emqxAuth);
             }
             connection.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
             connection.connect();
