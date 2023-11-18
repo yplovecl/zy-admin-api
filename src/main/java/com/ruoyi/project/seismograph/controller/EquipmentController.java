@@ -2,6 +2,7 @@ package com.ruoyi.project.seismograph.controller;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.aspectj.lang.annotation.Log;
 import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
@@ -209,5 +210,25 @@ public class EquipmentController extends BaseController {
 
         List<?> data = rs.getCacheList("device:store:" + equipment.getEquipmentIdentity());
         return success(data);
+    }
+
+    @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
+    @PostMapping(value = "/sendCommandHex/{equipmentId}")
+    public AjaxResult sendCommandHex(@PathVariable("equipmentId") Long equipmentId, @RequestBody JSONObject params) {
+        Equipment equipment = equipmentService.selectEquipmentByEquipmentId(equipmentId);
+        if (ObjectUtils.isEmpty(equipment)) {
+            return error("设备不存在");
+        }
+        Long enterpriseId = SecurityUtils.getEnterpriseId();
+        if (null != enterpriseId && !enterpriseId.equals(equipment.getEnterpriseId())) {
+            return error("设备不存在");
+        }
+        String hex = params.getString("hex");
+        if (StringUtils.isEmpty(hex)) {
+            return error("请输入要发送的指令");
+        }
+//        StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
+        JSONObject response = ApiRequestUtils.sendCommandHex(equipment.getEquipmentIdentity(), hex);
+        return success(response);
     }
 }

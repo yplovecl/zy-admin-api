@@ -56,6 +56,18 @@ public class ApiRequestUtils {
         return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
     }
 
+    public static JSONObject sendCommandHex(String deviceId, String hex) {
+        String url = String.format("%s/mqttService/send5gCmdHex", urlPrefix);
+        JSONObject data = new JSONObject();
+        data.put("clientId", deviceId);
+        data.put("hex", hex);
+        HttpResult httpResult = OkHttps.sync(url).addBodyPara(data).post();
+        String body = httpResult.getBody().toString();
+        logger.debug("clientId: {}, send5gCmdHex: {}, result: {}", deviceId, hex, body);
+        JSONObject response = JSONObject.parseObject(body);
+        return response;
+    }
+
     public static boolean send5gRoutineCmd(String deviceId) {
         for (int i = 1; i < 9; i++) {
             send5gRoutineCmd(deviceId, i);
@@ -66,7 +78,7 @@ public class ApiRequestUtils {
     /**
      * 5g配置接口
      *
-     * @param body
+     * @param data
      * @return
      */
     public static boolean send5gConfigCmd(JSONObject data) {
