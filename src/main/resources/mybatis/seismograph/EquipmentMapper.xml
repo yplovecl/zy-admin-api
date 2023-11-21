@@ -25,6 +25,7 @@
         <result property="online" column="online"/>
         <result property="have5g" column="have5g"/>
         <result property="packetTime" column="packet_time"/>
+        <result property="workMode" column="work_mode"/>
     </resultMap>
 
     <sql id="selectEquipmentVo">
@@ -40,6 +41,7 @@
                online,
                have5g,
                packet_time,
+               work_mode,
                site_loc,
                site_loc_lon,
                site_loc_lat,
@@ -60,6 +62,7 @@
             <if test="enterpriseId != null ">and t_equipment.enterprise_id = #{enterpriseId}</if>
             <if test="online != null  and online != ''">and online = #{online}</if>
             <if test="have5g != null  and have5g != ''">and have5g = #{have5g}</if>
+            <if test="workMode != null  and workMode != ''">and work_mode = #{workMode}</if>
             <if test="packetTime != null  and packetTime != ''">and packet_time = #{packetTime}</if>
             <if test="siteNo != null  and siteNo != ''">and site_no like concat('%', #{siteNo}, '%')</if>
             <if test="siteName != null  and siteName != ''">and site_name like concat('%', #{siteName}, '%')</if>
@@ -90,6 +93,7 @@
             <if test="firstUseTime != null">first_use_time,</if>
             <if test="accumulativeUseTime != null">accumulative_use_time,</if>
             <if test="siteNo != null">site_no,</if>
+            <if test="workMode != null">work_mode,</if>
             <if test="siteName != null">site_name,</if>
             <if test="deployer != null">deployer,</if>
             <if test="siteLoc != null">site_loc,</if>
@@ -110,6 +114,7 @@
             <if test="firstUseTime != null">#{firstUseTime},</if>
             <if test="accumulativeUseTime != null">#{accumulativeUseTime},</if>
             <if test="siteNo != null">#{siteNo},</if>
+            <if test="workMode != null">#{workMode},</if>
             <if test="siteName != null">#{siteName},</if>
             <if test="deployer != null">#{deployer},</if>
             <if test="siteLoc != null">#{siteLoc},</if>
@@ -136,6 +141,7 @@
             <if test="firstUseTime != null">first_use_time = #{firstUseTime},</if>
             <if test="accumulativeUseTime != null">accumulative_use_time = #{accumulativeUseTime},</if>
             <if test="siteNo != null">site_no = #{siteNo},</if>
+            <if test="workMode != null">work_mode = #{workMode},</if>
             <if test="siteName != null">site_name = #{siteName},</if>
             <if test="deployer != null">deployer = #{deployer},</if>
             <if test="siteLoc != null">site_loc = #{siteLoc},</if>
