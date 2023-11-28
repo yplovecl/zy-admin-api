@@ -3,7 +3,6 @@ package com.ruoyi.project.seismograph.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.framework.aspectj.lang.annotation.Excel;
 import com.ruoyi.framework.web.domain.BaseEntity;
-import io.swagger.models.auth.In;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -106,6 +105,9 @@ public class Equipment extends BaseEntity {
 
     @Excel(name = "封包间隔", readConverterExp = "Y=是,N=否")
     private Integer packetTime;
+
+    @Excel(name = "工作模式", readConverterExp = "continuous=连续,spacing=间隔")
+    private String workMode;
 
     public void setEquipmentId(Long equipmentId) {
         this.equipmentId = equipmentId;
@@ -265,6 +267,15 @@ public class Equipment extends BaseEntity {
                 .append("updateTime", getUpdateTime())
                 .append("online", getOnline())
                 .append("enterpriseName", getEnterpriseName())
+                .append("workMode", getWorkMode())
                 .toString();
+    }
+
+    public String getWorkMode() {
+        return workMode;
+    }
+
+    public void setWorkMode(String workMode) {
+        this.workMode = workMode;
     }
 }
