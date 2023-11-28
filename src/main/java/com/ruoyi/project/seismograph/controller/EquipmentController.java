@@ -237,7 +237,7 @@ public class EquipmentController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
-    @PostMapping(value = "/sendCmdControl/{equipmentId}/{type}")
+    @GetMapping(value = "/sendCmdControl/{equipmentId}/{type}")
     public AjaxResult sendCmdControl(@PathVariable("equipmentId") Long equipmentId, @PathVariable("type") Integer type) {
         Equipment equipment = getEquipment(equipmentId);
         if (ObjectUtils.isEmpty(equipment)) {
