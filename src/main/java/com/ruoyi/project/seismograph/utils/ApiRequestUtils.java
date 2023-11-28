@@ -89,4 +89,26 @@ public class ApiRequestUtils {
         JSONObject response = JSONObject.parseObject(body);
         return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
     }
+
+    public static boolean sendCmdConfig(String deviceId, String wakeTimeDur, String wakeTimeGap) {
+        String url = String.format("%s/mqttService/v1/cmd/config", urlPrefix);
+        JSONObject data = new JSONObject();
+        data.put("clientId", deviceId);
+        data.put("wakeTimeDur", wakeTimeDur);
+        data.put("wakeTimeGap", wakeTimeGap);
+        HttpResult httpResult = OkHttps.sync(url).addBodyPara(data).post();
+        String body = httpResult.getBody().toString();
+        logger.debug("url: {}, params: {}, result: {}", url, data.toJSONString(), body);
+        JSONObject response = JSONObject.parseObject(body);
+        return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
+    }
+
+    public static boolean sendCmdControl(String deviceId, int type) {
+        String url = String.format("%s/mqttService/v1/cmd/control", urlPrefix);
+        HttpResult httpResult = OkHttps.sync(url).addUrlPara("clientId", deviceId).addUrlPara("type", type).get();
+        String body = httpResult.getBody().toString();
+        logger.debug("clientId: {}, sendCmdControl result: {}", deviceId, body);
+        JSONObject response = JSONObject.parseObject(body);
+        return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
+    }
 }
