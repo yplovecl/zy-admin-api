@@ -73,7 +73,7 @@ public class EquipmentController extends BaseController {
             equipment.setEnterpriseId(enterpriseId);
         }
         List<Equipment> list = equipmentService.selectEquipmentList(equipment);
-        ExcelUtil<Equipment> util = new ExcelUtil<Equipment>(Equipment.class);
+        ExcelUtil<Equipment> util = new ExcelUtil<>(Equipment.class);
         util.exportExcel(response, list, "设备数据");
     }
 
@@ -83,12 +83,8 @@ public class EquipmentController extends BaseController {
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
     @GetMapping(value = "/{equipmentId}")
     public AjaxResult getInfo(@PathVariable("equipmentId") Long equipmentId) {
-        Equipment equipment = equipmentService.selectEquipmentByEquipmentId(equipmentId);
+        Equipment equipment = getEquipment(equipmentId);
         if (ObjectUtils.isEmpty(equipment)) {
-            return error("设备不存在");
-        }
-        Long enterpriseId = SecurityUtils.getEnterpriseId();
-        if (null != enterpriseId && !enterpriseId.equals(equipment.getEnterpriseId())) {
             return error("设备不存在");
         }
         JSONObject jsonObject = JSONObject.from(equipment);
@@ -184,12 +180,8 @@ public class EquipmentController extends BaseController {
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
     @GetMapping(value = "/sync/{equipmentId}")
     public AjaxResult syncInfo(@PathVariable("equipmentId") Long equipmentId) {
-        Equipment equipment = equipmentService.selectEquipmentByEquipmentId(equipmentId);
+        Equipment equipment = getEquipment(equipmentId);
         if (ObjectUtils.isEmpty(equipment)) {
-            return error("设备不存在");
-        }
-        Long enterpriseId = SecurityUtils.getEnterpriseId();
-        if (null != enterpriseId && !enterpriseId.equals(equipment.getEnterpriseId())) {
             return error("设备不存在");
         }
         ApiRequestUtils.send5gRoutineCmd(equipment.getEquipmentIdentity(), 100);
@@ -199,15 +191,10 @@ public class EquipmentController extends BaseController {
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
     @GetMapping(value = "/waveform/{equipmentId}")
     public AjaxResult waveform(@PathVariable("equipmentId") Long equipmentId) {
-        Equipment equipment = equipmentService.selectEquipmentByEquipmentId(equipmentId);
+        Equipment equipment = getEquipment(equipmentId);
         if (ObjectUtils.isEmpty(equipment)) {
             return error("设备不存在");
         }
-        Long enterpriseId = SecurityUtils.getEnterpriseId();
-        if (null != enterpriseId && !enterpriseId.equals(equipment.getEnterpriseId())) {
-            return error("设备不存在");
-        }
-
         List<?> data = rs.getCacheList("device:store:" + equipment.getEquipmentIdentity());
         return success(data);
     }
@@ -215,20 +202,63 @@ public class EquipmentController extends BaseController {
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
     @PostMapping(value = "/sendCommandHex/{equipmentId}")
     public AjaxResult sendCommandHex(@PathVariable("equipmentId") Long equipmentId, @RequestBody JSONObject params) {
-        Equipment equipment = equipmentService.selectEquipmentByEquipmentId(equipmentId);
+        Equipment equipment = getEquipment(equipmentId);
         if (ObjectUtils.isEmpty(equipment)) {
-            return error("设备不存在");
-        }
-        Long enterpriseId = SecurityUtils.getEnterpriseId();
-        if (null != enterpriseId && !enterpriseId.equals(equipment.getEnterpriseId())) {
             return error("设备不存在");
         }
         String hex = params.getString("hex");
         if (StringUtils.isEmpty(hex)) {
             return error("请输入要发送的指令");
         }
-//        StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
         JSONObject response = ApiRequestUtils.sendCommandHex(equipment.getEquipmentIdentity(), hex);
         return success(response);
+    }
+
+    @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
+    @PostMapping(value = "/sendCmdConfig/{equipmentId}")
+    public AjaxResult sendCmdConfig(@PathVariable("equipmentId") Long equipmentId, @RequestBody JSONObject params) {
+        Equipment equipment = getEquipment(equipmentId);
+        if (ObjectUtils.isEmpty(equipment)) {
+            return error("设备不存在");
+        }
+        String wakeTimeDur = params.getString("wakeTimeDur");
+        if (StringUtils.isEmpty(wakeTimeDur)) {
+            return error("请输入持续时间");
+        }
+        String wakeTimeGap = params.getString("wakeTimeGap");
+        if (StringUtils.isEmpty(wakeTimeGap)) {
+            return error("请输入唤醒时间");
+        }
+        boolean result = ApiRequestUtils.sendCmdConfig(equipment.getEquipmentIdentity(), wakeTimeDur, wakeTimeGap);
+        if (result)
+            return success("指令已发送");
+        else
+            return error("指令发送失败");
+    }
+
+    @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
+    @GetMapping(value = "/sendCmdControl/{equipmentId}/{type}")
+    public AjaxResult sendCmdControl(@PathVariable("equipmentId") Long equipmentId, @PathVariable("type") Integer type) {
+        Equipment equipment = getEquipment(equipmentId);
+        if (ObjectUtils.isEmpty(equipment)) {
+            return error("设备不存在");
+        }
+        boolean result = ApiRequestUtils.sendCmdControl(equipment.getEquipmentIdentity(), type);
+        if (result)
+            return success("指令已发送");
+        else
+            return error("指令发送失败");
+    }
+
+    private Equipment getEquipment(Long equipmentId) {
+        Equipment equipment = equipmentService.selectEquipmentByEquipmentId(equipmentId);
+        if (ObjectUtils.isEmpty(equipment)) {
+            return null;
+        }
+        Long enterpriseId = SecurityUtils.getEnterpriseId();
+        if (null != enterpriseId && !enterpriseId.equals(equipment.getEnterpriseId())) {
+            return null;
+        }
+        return equipment;
     }
 }
