@@ -1,21 +1,7 @@
 package com.ruoyi.project.system.controller;
 
-import java.util.List;
-
-import com.ruoyi.common.utils.SecurityUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.constant.UserConstants;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.Log;
 import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
@@ -23,10 +9,18 @@ import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.system.domain.SysDept;
 import com.ruoyi.project.system.service.ISysDeptService;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 部门信息
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -44,6 +38,9 @@ public class SysDeptController extends BaseController
     public AjaxResult list(SysDept dept)
     {
         Long enterpriseId = SecurityUtils.getEnterpriseId();
+        if(ObjectUtils.isEmpty(enterpriseId))
+            enterpriseId = 0l;
+        dept.setEnterpriseId(enterpriseId);
         List<SysDept> depts = deptService.selectDeptList(dept);
         return success(depts);
     }
@@ -55,7 +52,10 @@ public class SysDeptController extends BaseController
     @GetMapping("/list/exclude/{deptId}")
     public AjaxResult excludeChild(@PathVariable(value = "deptId", required = false) Long deptId)
     {
-        List<SysDept> depts = deptService.selectDeptList(new SysDept());
+        Long enterpriseId = SecurityUtils.getEnterpriseId();
+        if(ObjectUtils.isEmpty(enterpriseId))
+            enterpriseId = 0l;
+        List<SysDept> depts = deptService.selectDeptList(new SysDept(enterpriseId));
         depts.removeIf(d -> d.getDeptId().intValue() == deptId || ArrayUtils.contains(StringUtils.split(d.getAncestors(), ","), deptId + ""));
         return success(depts);
     }
@@ -83,6 +83,10 @@ public class SysDeptController extends BaseController
         {
             return error("新增部门'" + dept.getDeptName() + "'失败，部门名称已存在");
         }
+        Long enterpriseId = SecurityUtils.getEnterpriseId();
+        if(ObjectUtils.isEmpty(enterpriseId))
+            enterpriseId = 0l;
+        dept.setEnterpriseId(enterpriseId);
         dept.setCreateBy(getUsername());
         return toAjax(deptService.insertDept(dept));
     }

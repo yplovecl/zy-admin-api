@@ -1,18 +1,19 @@
 package com.ruoyi.project.system.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.ruoyi.framework.web.domain.BaseEntity;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import com.ruoyi.framework.web.domain.BaseEntity;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 部门表 sys_dept
- * 
+ *
  * @author ruoyi
  */
 public class SysDept extends BaseEntity
@@ -53,7 +54,14 @@ public class SysDept extends BaseEntity
     private String parentName;
 
     private Long enterpriseId;
-    
+
+    public SysDept(){
+    }
+
+    public SysDept(Long enterpriseId){
+        this.setEnterpriseId(enterpriseId);
+    }
+
     /** 子部门 */
     private List<SysDept> children = new ArrayList<SysDept>();
 

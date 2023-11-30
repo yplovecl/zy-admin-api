@@ -2,6 +2,11 @@ package com.ruoyi.project.seismograph.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.project.system.domain.SysDept;
+import com.ruoyi.project.system.service.ISysDeptService;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +38,9 @@ public class EnterpriseController extends BaseController
 {
     @Autowired
     private IEnterpriseService enterpriseService;
+
+    @Autowired
+    private ISysDeptService deptService;
 
     /**
      * 查询企业列表
@@ -77,7 +85,19 @@ public class EnterpriseController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody Enterprise enterprise)
     {
-        return toAjax(enterpriseService.insertEnterprise(enterprise));
+        int row = enterpriseService.insertEnterprise(enterprise);
+        if(row > 0){
+            SysDept dept = new SysDept();
+            dept.setEnterpriseId(Long.valueOf(enterprise.getEnterpriseId()));
+            dept.setDeptName(enterprise.getAbbreviation());
+//            dept.setParentId(0l);
+            dept.setLeader(enterprise.getContactPerson());
+            dept.setPhone(enterprise.getContactWay());
+            dept.setCreateBy(getUsername());
+//            dept.setStatus("0");
+            deptService.insertDept(dept);
+        }
+        return toAjax(row);
     }
 
     /**
