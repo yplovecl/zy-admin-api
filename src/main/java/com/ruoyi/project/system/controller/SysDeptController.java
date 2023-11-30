@@ -1,6 +1,8 @@
 package com.ruoyi.project.system.controller;
 
 import java.util.List;
+
+import com.ruoyi.common.utils.SecurityUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,6 +43,7 @@ public class SysDeptController extends BaseController
     @GetMapping("/list")
     public AjaxResult list(SysDept dept)
     {
+        Long enterpriseId = SecurityUtils.getEnterpriseId();
         List<SysDept> depts = deptService.selectDeptList(dept);
         return success(depts);
     }
