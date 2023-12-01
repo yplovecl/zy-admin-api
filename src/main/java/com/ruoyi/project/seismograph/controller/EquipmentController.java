@@ -256,7 +256,7 @@ public class EquipmentController extends BaseController {
             return null;
         }
         Long enterpriseId = SecurityUtils.getEnterpriseId();
-        if (null != enterpriseId && !enterpriseId.equals(equipment.getEnterpriseId())) {
+        if (null != enterpriseId && enterpriseId > 0 && !enterpriseId.equals(equipment.getEnterpriseId())) {
             return null;
         }
         return equipment;
