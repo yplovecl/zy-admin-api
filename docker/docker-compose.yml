@@ -23,7 +23,7 @@ services:
 #    network_mode: "bridge"
 
   zyserver:
-    image: pange/zy-server:3.8.6
+    image: pange/zy-server:3.8.7
     environment:
       # 时区上海
       TZ: Asia/Shanghai
