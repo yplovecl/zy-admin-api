@@ -38,6 +38,8 @@ public class SysUser extends BaseEntity
     @Excel(name = "登录名称")
     private String userName;
 
+    private String userType;
+
     /** 用户昵称 */
     @Excel(name = "用户名称")
     private String nickName;
@@ -348,5 +350,13 @@ public class SysUser extends BaseEntity
 
     public void setEnterpriseId(Long enterpriseId) {
         this.enterpriseId = enterpriseId;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 }

@@ -191,4 +191,12 @@ public class BaseController
     {
         return getLoginUser().getUsername();
     }
+
+    public Long getEnterpriseId(){
+        Long enterpriseId = SecurityUtils.getEnterpriseId();
+        if (null != enterpriseId) {
+            return enterpriseId;
+        }
+        return 0L;
+    }
 }

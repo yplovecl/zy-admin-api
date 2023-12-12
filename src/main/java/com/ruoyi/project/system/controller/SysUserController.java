@@ -59,9 +59,13 @@ public class SysUserController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SysUser user)
     {
-        Long enterpriseId = SecurityUtils.getEnterpriseId();
-        if (null != enterpriseId && enterpriseId.intValue() > 0) {
+        Long enterpriseId = getEnterpriseId();
+        if (enterpriseId.intValue() > 0) {
             user.setEnterpriseId(enterpriseId);
+        } else {
+            user.setEnterpriseId(null);
+            if(getUserId() > 1)
+                user.setUserType("00");
         }
         startPage();
         List<SysUser> list = userService.selectUserList(user);
@@ -73,9 +77,11 @@ public class SysUserController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, SysUser user)
     {
-        Long enterpriseId = SecurityUtils.getEnterpriseId();
-        if (null != enterpriseId && enterpriseId.intValue() > 0) {
+        Long enterpriseId = getEnterpriseId();
+        if (enterpriseId.intValue() > 0) {
             user.setEnterpriseId(enterpriseId);
+        } else {
+            user.setUserType("00");
         }
         List<SysUser> list = userService.selectUserList(user);
         ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
@@ -87,8 +93,15 @@ public class SysUserController extends BaseController
     @PostMapping("/importData")
     public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
     {
+        Long enterpriseId = getEnterpriseId();
         ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
         List<SysUser> userList = util.importExcel(file.getInputStream());
+        if (StringUtils.isNull(userList) && !userList.isEmpty()) {
+            for (SysUser user : userList){
+                user.setUserType(enterpriseId > 0 ? "01" : "00");
+                user.setEnterpriseId(enterpriseId);
+            }
+        }
         String operName = getUsername();
         String message = userService.importUser(userList, updateSupport, operName);
         return success(message);
@@ -144,10 +157,9 @@ public class SysUserController extends BaseController
         {
             return error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
-        Long enterpriseId = SecurityUtils.getEnterpriseId();
-        if (null != enterpriseId && enterpriseId.intValue() > 0) {
-            user.setEnterpriseId(enterpriseId);
-        }
+        Long enterpriseId = getEnterpriseId();
+        user.setEnterpriseId(enterpriseId);
+        user.setUserType(enterpriseId > 0 ? "01" : "00");
         user.setCreateBy(getUsername());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         return toAjax(userService.insertUser(user));
@@ -258,7 +270,7 @@ public class SysUserController extends BaseController
     @GetMapping("/deptTree")
     public AjaxResult deptTree(SysDept dept)
     {
-        Long enterpriseId = SecurityUtils.getEnterpriseId();
+        Long enterpriseId = getEnterpriseId();
         if(enterpriseId > 0)
             dept.setEnterpriseId(enterpriseId);
 

@@ -9,6 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="enterpriseId"       column="enterprise_id"      />
         <result property="deptId"       column="dept_id"      />
         <result property="userName"     column="user_name"    />
+        <result property="userType"     column="user_type"    />
         <result property="nickName"     column="nick_name"    />
         <result property="email"        column="email"        />
         <result property="phonenumber"  column="phonenumber"  />
@@ -87,6 +88,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="userName != null and userName != ''">
 			AND u.user_name like concat('%', #{userName}, '%')
 		</if>
+		<if test="userType != null and userType != ''">
+			AND u.user_type = #{userType}
+		</if>
 		<if test="status != null and status != ''">
 			AND u.status = #{status}
 		</if>
@@ -122,6 +126,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="phonenumber != null and phonenumber != ''">
 			AND u.phonenumber like concat('%', #{phonenumber}, '%')
 		</if>
+		<if test="userType != null and userType != ''">
+			AND u.user_type = #{userType}
+		</if>
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
 	</select>
@@ -139,6 +146,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</if>
 		<if test="phonenumber != null and phonenumber != ''">
 			AND u.phonenumber like concat('%', #{phonenumber}, '%')
+		</if>
+		<if test="userType != null and userType != ''">
+			AND u.user_type = #{userType}
 		</if>
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
@@ -172,6 +182,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="enterpriseId != null">enterprise_id,</if>
  			<if test="deptId != null and deptId != 0">dept_id,</if>
  			<if test="userName != null and userName != ''">user_name,</if>
+ 			<if test="userType != null and userType != ''">user_type,</if>
  			<if test="nickName != null and nickName != ''">nick_name,</if>
  			<if test="email != null and email != ''">email,</if>
  			<if test="avatar != null and avatar != ''">avatar,</if>
@@ -187,6 +198,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="enterpriseId != null">#{enterpriseId},</if>
  			<if test="deptId != null and deptId != ''">#{deptId},</if>
  			<if test="userName != null and userName != ''">#{userName},</if>
+ 			<if test="userType != null and userType != ''">#{userType},</if>
  			<if test="nickName != null and nickName != ''">#{nickName},</if>
  			<if test="email != null and email != ''">#{email},</if>
  			<if test="avatar != null and avatar != ''">#{avatar},</if>
