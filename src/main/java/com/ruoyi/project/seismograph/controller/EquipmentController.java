@@ -250,6 +250,35 @@ public class EquipmentController extends BaseController {
             return error("指令发送失败");
     }
 
+    @PreAuthorize("@ss.hasPermi('seismograph:equipment:add')")
+    @Log(title = "批量添加设备", businessType = BusinessType.INSERT)
+    @PostMapping("/batchAdd")
+    public AjaxResult batchAdd(@RequestBody JSONObject params) {
+        String idTpl = params.getString("template");
+        if (StringUtils.isEmpty(idTpl))
+            return error("请选择设备编号模板");
+        int start = params.getIntValue("start");
+        int end = params.getIntValue("end");
+        if (!(start > 0 && end > 0 && start < end))
+            return error("设备编号起始/结束位置错误");
+        int size = 0;
+        for (int i = start; i <= end; i++) {
+            String no = String.format("%06d", i);
+            Equipment equipment = equipmentService.selectByEquipmentIdentity(no);
+            if (StringUtils.isNotNull(equipment))
+                continue;
+            equipment = new Equipment();
+            equipment.setEquipmentIdentity(no);
+            equipment.setHave5g(params.getString("have5g"));
+            equipment.setEnterpriseId(params.getLong("enterpriseId"));
+            equipment.setPacketTime(params.getInteger("packetTime"));
+            equipment.setWorkMode(params.getString("workMode"));
+            equipmentService.insertEquipment(equipment);
+            size++;
+        }
+        return success(String.format("成功添加%s台设备", size));
+    }
+
     private Equipment getEquipment(Long equipmentId) {
         Equipment equipment = equipmentService.selectEquipmentByEquipmentId(equipmentId);
         if (ObjectUtils.isEmpty(equipment)) {
