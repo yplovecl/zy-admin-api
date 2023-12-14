@@ -254,7 +254,7 @@ public class EquipmentController extends BaseController {
     @Log(title = "批量添加设备", businessType = BusinessType.INSERT)
     @PostMapping("/batchAdd")
     public AjaxResult batchAdd(@RequestBody JSONObject params) {
-        String idTpl = params.getString("template");
+        String idTpl = params.getString("idTpl");
         if (StringUtils.isEmpty(idTpl))
             return error("请选择设备编号模板");
         int start = params.getIntValue("start");
@@ -268,6 +268,7 @@ public class EquipmentController extends BaseController {
             if (StringUtils.isNotNull(equipment))
                 continue;
             equipment = new Equipment();
+            equipment.setOnline("N");
             equipment.setEquipmentIdentity(equipmentIdentity);
             equipment.setHave5g(params.getString("have5g"));
             equipment.setEnterpriseId(params.getLong("enterpriseId"));
