@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -246,6 +247,26 @@ public class EquipmentController extends BaseController {
         boolean result = ApiRequestUtils.sendCmdControl(equipment.getEquipmentIdentity(), type);
         if (result)
             return success("指令已发送");
+        else
+            return error("指令发送失败");
+    }
+
+    /**
+     * 获取设备采样率
+     *
+     * @param equipmentId
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
+    @GetMapping(value = "/getDeviceSamplingRate/{equipmentId}")
+    public HashMap<String, Object> getDeviceSamplingRate(@PathVariable("equipmentId") Long equipmentId) {
+        Equipment equipment = getEquipment(equipmentId);
+        if (ObjectUtils.isEmpty(equipment)) {
+            return error("设备不存在");
+        }
+        JSONObject result = ApiRequestUtils.getDeviceSamplingRate(equipment.getEquipmentIdentity());
+        if (StringUtils.isNotEmpty(result))
+            return result;
         else
             return error("指令发送失败");
     }
