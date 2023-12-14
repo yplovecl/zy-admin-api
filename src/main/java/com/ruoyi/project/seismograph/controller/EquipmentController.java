@@ -263,12 +263,12 @@ public class EquipmentController extends BaseController {
             return error("设备编号起始/结束位置错误");
         int size = 0;
         for (int i = start; i <= end; i++) {
-            String no = String.format("%06d", i);
-            Equipment equipment = equipmentService.selectByEquipmentIdentity(no);
+            String equipmentIdentity = idTpl.replace("XXXXXX", String.format("%06d", i));
+            Equipment equipment = equipmentService.selectByEquipmentIdentity(equipmentIdentity);
             if (StringUtils.isNotNull(equipment))
                 continue;
             equipment = new Equipment();
-            equipment.setEquipmentIdentity(no);
+            equipment.setEquipmentIdentity(equipmentIdentity);
             equipment.setHave5g(params.getString("have5g"));
             equipment.setEnterpriseId(params.getLong("enterpriseId"));
             equipment.setPacketTime(params.getInteger("packetTime"));
