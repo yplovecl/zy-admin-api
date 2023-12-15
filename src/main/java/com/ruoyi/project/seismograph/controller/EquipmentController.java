@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -259,16 +258,22 @@ public class EquipmentController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
     @GetMapping(value = "/getDeviceSamplingRate/{equipmentId}")
-    public HashMap<String, Object> getDeviceSamplingRate(@PathVariable("equipmentId") Long equipmentId) {
+    public AjaxResult getDeviceSamplingRate(@PathVariable("equipmentId") Long equipmentId) throws InterruptedException {
         Equipment equipment = getEquipment(equipmentId);
         if (ObjectUtils.isEmpty(equipment)) {
             return error("设备不存在");
         }
-        JSONObject result = ApiRequestUtils.getDeviceSamplingRate(equipment.getEquipmentIdentity());
-        if (StringUtils.isNotEmpty(result))
-            return result;
+        boolean result = false;
+        for (int i = 0; i < 20; i++) {
+            result = ApiRequestUtils.getDeviceSamplingRate(equipment.getEquipmentIdentity());
+            if (result)
+                break;
+            Thread.sleep(1000);
+        }
+        if (result)
+            return success("采样率获取成功");
         else
-            return error("指令发送失败");
+            return error("设备未上传采样率，请稍后再试");
     }
 
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:add')")

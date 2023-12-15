@@ -118,13 +118,12 @@ public class ApiRequestUtils {
      * @param deviceId
      * @return
      */
-    public static JSONObject getDeviceSamplingRate(String deviceId) {
+    public static boolean getDeviceSamplingRate(String deviceId) {
         String url = String.format("%s/mqttService/getDeviceSamplingRate", urlPrefix);
         HttpResult httpResult = OkHttps.sync(url).addUrlPara("clientId", deviceId).get();
         String body = httpResult.getBody().toString();
         logger.debug("clientId: {}, getDeviceSamplingRate result: {}", deviceId, body);
-//        AjaxResult result = body.toBean(AjaxResult.class);
-        JSONObject result = JSONObject.parseObject(body);
-        return result;
+        JSONObject response = JSONObject.parseObject(body);
+        return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
     }
 }
