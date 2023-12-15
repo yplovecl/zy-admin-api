@@ -5,6 +5,7 @@ import cn.zhxu.okhttps.OkHttps;
 import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.Threads;
+import com.ruoyi.framework.web.domain.AjaxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,16 +48,15 @@ public class ApiRequestUtils {
      * @param cmd
      * @return
      */
-    public static boolean send5gRoutineCmd(String deviceId, int cmd) {
+    public static AjaxResult send5gRoutineCmd(String deviceId, int cmd) {
         String url = String.format("%s/mqttService/send5gRoutineCmd", urlPrefix);
         HttpResult httpResult = OkHttps.sync(url).addUrlPara("clientId", deviceId).addUrlPara("cmd", cmd).get();
         String body = httpResult.getBody().toString();
         logger.info("clientId: {}, send5gRoutineCmd result: {}", deviceId, body);
-        JSONObject response = JSONObject.parseObject(body);
-        return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
+        return JSONObject.parseObject(body, AjaxResult.class);
     }
 
-    public static JSONObject sendCommandHex(String deviceId, String hex) {
+    public static AjaxResult sendCommandHex(String deviceId, String hex) {
         String url = String.format("%s/mqttService/send5gCmdHex", urlPrefix);
         JSONObject data = new JSONObject();
         data.put("clientId", deviceId);
@@ -64,15 +64,7 @@ public class ApiRequestUtils {
         HttpResult httpResult = OkHttps.sync(url).addBodyPara(data).post();
         String body = httpResult.getBody().toString();
         logger.info("clientId: {}, send5gCmdHex: {}, result: {}", deviceId, hex, body);
-        JSONObject response = JSONObject.parseObject(body);
-        return response;
-    }
-
-    public static boolean send5gRoutineCmd(String deviceId) {
-        for (int i = 1; i < 9; i++) {
-            send5gRoutineCmd(deviceId, i);
-        }
-        return true;
+        return JSONObject.parseObject(body, AjaxResult.class);
     }
 
     /**
@@ -81,16 +73,15 @@ public class ApiRequestUtils {
      * @param data
      * @return
      */
-    public static boolean send5gConfigCmd(JSONObject data) {
+    public static AjaxResult send5gConfigCmd(JSONObject data) {
         String url = String.format("%s/mqttService/send5gConfigCmd", urlPrefix);
         HttpResult httpResult = OkHttps.sync(url).addBodyPara(data).post();
         String body = httpResult.getBody().toString();
         logger.info("send5gRoutineCmd, params: {}, result: {}", data.toString(), body);
-        JSONObject response = JSONObject.parseObject(body);
-        return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
+        return JSONObject.parseObject(body, AjaxResult.class);
     }
 
-    public static boolean sendCmdConfig(String deviceId, String wakeTimeDur, String wakeTimeGap) {
+    public static AjaxResult sendCmdConfig(String deviceId, String wakeTimeDur, String wakeTimeGap) {
         String url = String.format("%s/mqttService/v1/cmd/config", urlPrefix);
         JSONObject data = new JSONObject();
         data.put("clientId", deviceId);
@@ -99,17 +90,15 @@ public class ApiRequestUtils {
         HttpResult httpResult = OkHttps.sync(url).addBodyPara(data).post();
         String body = httpResult.getBody().toString();
         logger.info("url: {}, params: {}, result: {}", url, data.toJSONString(), body);
-        JSONObject response = JSONObject.parseObject(body);
-        return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
+        return JSONObject.parseObject(body, AjaxResult.class);
     }
 
-    public static boolean sendCmdControl(String deviceId, int type) {
+    public static AjaxResult sendCmdControl(String deviceId, int type) {
         String url = String.format("%s/mqttService/v1/cmd/control", urlPrefix);
         HttpResult httpResult = OkHttps.sync(url).addUrlPara("clientId", deviceId).addUrlPara("type", type).get();
         String body = httpResult.getBody().toString();
         logger.info("clientId: {}, sendCmdControl result: {}", deviceId, body);
-        JSONObject response = JSONObject.parseObject(body);
-        return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
+        return JSONObject.parseObject(body, AjaxResult.class);
     }
 
     /**
@@ -118,12 +107,23 @@ public class ApiRequestUtils {
      * @param deviceId
      * @return
      */
-    public static boolean getDeviceSamplingRate(String deviceId) {
+    public static AjaxResult getDeviceSamplingRate(String deviceId, int retry) {
         String url = String.format("%s/mqttService/getDeviceSamplingRate", urlPrefix);
         HttpResult httpResult = OkHttps.sync(url).addUrlPara("clientId", deviceId).get();
         String body = httpResult.getBody().toString();
         logger.info("clientId: {}, getDeviceSamplingRate result: {}", deviceId, body);
-        JSONObject response = JSONObject.parseObject(body);
-        return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
+        AjaxResult result = JSONObject.parseObject(body, AjaxResult.class);
+        if (result.isSuccess() || retry <= 0)
+            return result;
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return getDeviceSamplingRate(deviceId, retry - 1);
+    }
+
+    public static AjaxResult getDeviceSamplingRate(String deviceId) {
+        return getDeviceSamplingRate(deviceId, 20);
     }
 }

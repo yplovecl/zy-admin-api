@@ -184,8 +184,7 @@ public class EquipmentController extends BaseController {
         if (ObjectUtils.isEmpty(equipment)) {
             return error("设备不存在");
         }
-        ApiRequestUtils.send5gRoutineCmd(equipment.getEquipmentIdentity(), 100);
-        return success();
+        return ApiRequestUtils.send5gRoutineCmd(equipment.getEquipmentIdentity(), 100);
     }
 
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
@@ -210,8 +209,7 @@ public class EquipmentController extends BaseController {
         if (StringUtils.isEmpty(hex)) {
             return error("请输入要发送的指令");
         }
-        JSONObject response = ApiRequestUtils.sendCommandHex(equipment.getEquipmentIdentity(), hex);
-        return success(response);
+        return ApiRequestUtils.sendCommandHex(equipment.getEquipmentIdentity(), hex);
     }
 
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
@@ -229,11 +227,7 @@ public class EquipmentController extends BaseController {
         if (StringUtils.isEmpty(wakeTimeGap)) {
             return error("请输入唤醒时间");
         }
-        boolean result = ApiRequestUtils.sendCmdConfig(equipment.getEquipmentIdentity(), wakeTimeDur, wakeTimeGap);
-        if (result)
-            return success("指令已发送");
-        else
-            return error("指令发送失败");
+        return ApiRequestUtils.sendCmdConfig(equipment.getEquipmentIdentity(), wakeTimeDur, wakeTimeGap);
     }
 
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
@@ -243,11 +237,7 @@ public class EquipmentController extends BaseController {
         if (ObjectUtils.isEmpty(equipment)) {
             return error("设备不存在");
         }
-        boolean result = ApiRequestUtils.sendCmdControl(equipment.getEquipmentIdentity(), type);
-        if (result)
-            return success("指令已发送");
-        else
-            return error("指令发送失败");
+        return ApiRequestUtils.sendCmdControl(equipment.getEquipmentIdentity(), type);
     }
 
     /**
@@ -263,17 +253,7 @@ public class EquipmentController extends BaseController {
         if (ObjectUtils.isEmpty(equipment)) {
             return error("设备不存在");
         }
-        boolean result = false;
-        for (int i = 0; i < 20; i++) {
-            result = ApiRequestUtils.getDeviceSamplingRate(equipment.getEquipmentIdentity());
-            if (result)
-                break;
-            Thread.sleep(1500);
-        }
-        if (result)
-            return success("采样率获取成功");
-        else
-            return error("设备未上传采样率，请稍后再试");
+        return ApiRequestUtils.getDeviceSamplingRate(equipment.getEquipmentIdentity());
     }
 
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:add')")
