@@ -34,7 +34,7 @@ public class ApiRequestUtils {
         String url = String.format("%s/mqttService/get5gPayload", urlPrefix);
         HttpResult httpResult = OkHttps.sync(url).addUrlPara("clientId", deviceId).get();
         String body = httpResult.getBody().toString();
-        logger.debug("clientId: {}, get5gPayload result: {}", deviceId, body);
+        logger.info("clientId: {}, get5gPayload result: {}", deviceId, body);
         JSONObject response = JSONObject.parseObject(body);
         if (StringUtils.isNotEmpty(response)) {
             return response.getJSONObject("data");
@@ -51,7 +51,7 @@ public class ApiRequestUtils {
         String url = String.format("%s/mqttService/send5gRoutineCmd", urlPrefix);
         HttpResult httpResult = OkHttps.sync(url).addUrlPara("clientId", deviceId).addUrlPara("cmd", cmd).get();
         String body = httpResult.getBody().toString();
-        logger.debug("clientId: {}, send5gRoutineCmd result: {}", deviceId, body);
+        logger.info("clientId: {}, send5gRoutineCmd result: {}", deviceId, body);
         JSONObject response = JSONObject.parseObject(body);
         return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
     }
@@ -63,7 +63,7 @@ public class ApiRequestUtils {
         data.put("hex", hex);
         HttpResult httpResult = OkHttps.sync(url).addBodyPara(data).post();
         String body = httpResult.getBody().toString();
-        logger.debug("clientId: {}, send5gCmdHex: {}, result: {}", deviceId, hex, body);
+        logger.info("clientId: {}, send5gCmdHex: {}, result: {}", deviceId, hex, body);
         JSONObject response = JSONObject.parseObject(body);
         return response;
     }
@@ -85,7 +85,7 @@ public class ApiRequestUtils {
         String url = String.format("%s/mqttService/send5gConfigCmd", urlPrefix);
         HttpResult httpResult = OkHttps.sync(url).addBodyPara(data).post();
         String body = httpResult.getBody().toString();
-        logger.debug("send5gRoutineCmd, params: {}, result: {}", data.toString(), body);
+        logger.info("send5gRoutineCmd, params: {}, result: {}", data.toString(), body);
         JSONObject response = JSONObject.parseObject(body);
         return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
     }
@@ -98,7 +98,7 @@ public class ApiRequestUtils {
         data.put("wakeTimeGap", wakeTimeGap);
         HttpResult httpResult = OkHttps.sync(url).addBodyPara(data).post();
         String body = httpResult.getBody().toString();
-        logger.debug("url: {}, params: {}, result: {}", url, data.toJSONString(), body);
+        logger.info("url: {}, params: {}, result: {}", url, data.toJSONString(), body);
         JSONObject response = JSONObject.parseObject(body);
         return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
     }
@@ -107,7 +107,7 @@ public class ApiRequestUtils {
         String url = String.format("%s/mqttService/v1/cmd/control", urlPrefix);
         HttpResult httpResult = OkHttps.sync(url).addUrlPara("clientId", deviceId).addUrlPara("type", type).get();
         String body = httpResult.getBody().toString();
-        logger.debug("clientId: {}, sendCmdControl result: {}", deviceId, body);
+        logger.info("clientId: {}, sendCmdControl result: {}", deviceId, body);
         JSONObject response = JSONObject.parseObject(body);
         return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
     }
@@ -122,7 +122,7 @@ public class ApiRequestUtils {
         String url = String.format("%s/mqttService/getDeviceSamplingRate", urlPrefix);
         HttpResult httpResult = OkHttps.sync(url).addUrlPara("clientId", deviceId).get();
         String body = httpResult.getBody().toString();
-        logger.debug("clientId: {}, getDeviceSamplingRate result: {}", deviceId, body);
+        logger.info("clientId: {}, getDeviceSamplingRate result: {}", deviceId, body);
         JSONObject response = JSONObject.parseObject(body);
         return StringUtils.isNotEmpty(response) && response.getIntValue("code") == 200;
     }
