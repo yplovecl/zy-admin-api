@@ -268,7 +268,7 @@ public class EquipmentController extends BaseController {
             result = ApiRequestUtils.getDeviceSamplingRate(equipment.getEquipmentIdentity());
             if (result)
                 break;
-            Thread.sleep(1000);
+            Thread.sleep(1500);
         }
         if (result)
             return success("采样率获取成功");
