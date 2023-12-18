@@ -73,8 +73,12 @@ public class ApiRequestUtils {
      * @param data
      * @return
      */
-    public static AjaxResult send5gConfigCmd(JSONObject data) {
+    public static AjaxResult send5gConfigCmd(int type, String deviceId, JSONObject json) {
         String url = String.format("%s/mqttService/send5gConfigCmd", urlPrefix);
+        JSONObject data = new JSONObject();
+        data.put("type", type);
+        data.put("clientId", deviceId);
+        data.put("json", json);
         HttpResult httpResult = OkHttps.sync(url).addBodyPara(data).post();
         String body = httpResult.getBody().toString();
         logger.info("send5gRoutineCmd, params: {}, result: {}", data.toString(), body);

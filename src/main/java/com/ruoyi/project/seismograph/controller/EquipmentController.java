@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -228,6 +229,18 @@ public class EquipmentController extends BaseController {
             return error("请输入唤醒时间");
         }
         return ApiRequestUtils.sendCmdConfig(equipment.getEquipmentIdentity(), wakeTimeDur, wakeTimeGap);
+    }
+
+    @PreAuthorize("@ss.hasPermi('seismograph:equipment:wrConfig')")
+    @PostMapping(value = "/send5gConfigCmd/{type}/{equipmentId}")
+    public AjaxResult send5gConfigCmd(@PathVariable("type") int type, @PathVariable("equipmentId") Long equipmentId, @RequestBody JSONObject params) {
+        Equipment equipment = getEquipment(equipmentId);
+        if (ObjectUtils.isEmpty(equipment)) {
+            return error("设备不存在");
+        }
+        if (!Arrays.asList(1, 2, 3, 4).contains(type))
+            return error("参数类型错误");
+        return ApiRequestUtils.send5gConfigCmd(type, equipment.getEquipmentIdentity(), params);
     }
 
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
