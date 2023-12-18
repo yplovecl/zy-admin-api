@@ -81,7 +81,7 @@ public class ApiRequestUtils {
         data.put("json", json);
         HttpResult httpResult = OkHttps.sync(url).addBodyPara(data).post();
         String body = httpResult.getBody().toString();
-        logger.info("send5gRoutineCmd, params: {}, result: {}", data.toString(), body);
+        logger.info("send5gConfigCmd, params: {}, result: {}", data.toString(), body);
         return JSONObject.parseObject(body, AjaxResult.class);
     }
 
