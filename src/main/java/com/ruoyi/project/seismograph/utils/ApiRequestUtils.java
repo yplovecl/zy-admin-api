@@ -28,8 +28,10 @@ public class ApiRequestUtils {
     }
 
     /**
-     * @param deviceId
-     * @return
+     * get5gPayload
+     *
+     * @param deviceId 设备ID
+     * @return JSONObject
      */
     public static JSONObject get5gPayload(String deviceId) {
         String url = String.format("%s/mqttService/get5gPayload", urlPrefix);
@@ -44,34 +46,43 @@ public class ApiRequestUtils {
     }
 
     /**
-     * @param deviceId
-     * @param cmd
-     * @return
+     * send5gRoutineCmd
+     *
+     * @param deviceId 设备ID
+     * @param cmd      cmd
+     * @return AjaxResult
      */
     public static AjaxResult send5gRoutineCmd(String deviceId, int cmd) {
         String url = String.format("%s/mqttService/send5gRoutineCmd", urlPrefix);
-        HttpResult httpResult = OkHttps.sync(url).addUrlPara("clientId", deviceId).addUrlPara("cmd", cmd).get();
-        String body = httpResult.getBody().toString();
-        logger.info("clientId: {}, send5gRoutineCmd result: {}", deviceId, body);
-        return JSONObject.parseObject(body, AjaxResult.class);
+        HttpResult.Body body = OkHttps.sync(url).addUrlPara("clientId", deviceId).addUrlPara("cmd", cmd).get().getBody().cache();
+        logger.info("clientId: {}, send5gRoutineCmd result: {}", deviceId, body.toString());
+        return body.toBean(AjaxResult.class);
     }
 
+    /**
+     * sendCommandHex
+     *
+     * @param deviceId 设备ID
+     * @param hex
+     * @return AjaxResult
+     */
     public static AjaxResult sendCommandHex(String deviceId, String hex) {
         String url = String.format("%s/mqttService/send5gCmdHex", urlPrefix);
         JSONObject data = new JSONObject();
         data.put("clientId", deviceId);
         data.put("hex", hex);
-        HttpResult httpResult = OkHttps.sync(url).addBodyPara(data).post();
-        String body = httpResult.getBody().toString();
-        logger.info("clientId: {}, send5gCmdHex: {}, result: {}", deviceId, hex, body);
-        return JSONObject.parseObject(body, AjaxResult.class);
+        HttpResult.Body body = OkHttps.sync(url).addBodyPara(data).post().getBody().cache();
+        logger.info("clientId: {}, send5gCmdHex: {}, result: {}", deviceId, hex, body.toString());
+        return body.toBean(AjaxResult.class);
     }
 
     /**
      * 5g配置接口
      *
-     * @param data
-     * @return
+     * @param type
+     * @param deviceId 设备ID
+     * @param json
+     * @return AjaxResult
      */
     public static AjaxResult send5gConfigCmd(int type, String deviceId, JSONObject json) {
         String url = String.format("%s/mqttService/send5gConfigCmd", urlPrefix);
@@ -79,44 +90,56 @@ public class ApiRequestUtils {
         data.put("type", type);
         data.put("clientId", deviceId);
         data.put("json", json);
-        HttpResult httpResult = OkHttps.sync(url).addBodyPara(data).post();
-        String body = httpResult.getBody().toString();
-        logger.info("send5gConfigCmd, params: {}, result: {}", data.toString(), body);
-        return JSONObject.parseObject(body, AjaxResult.class);
+        HttpResult.Body body = OkHttps.sync(url).bodyType("application/json").addBodyPara(data).post().getBody().cache();
+        logger.info("send5gConfigCmd, params: {}, result: {}", data.toJSONString(), body.toString());
+        return body.toBean(AjaxResult.class);
     }
 
+    /**
+     * sendCmdConfig
+     *
+     * @param deviceId    设备ID
+     * @param wakeTimeDur
+     * @param wakeTimeGap
+     * @return AjaxResult
+     */
     public static AjaxResult sendCmdConfig(String deviceId, String wakeTimeDur, String wakeTimeGap) {
         String url = String.format("%s/mqttService/v1/cmd/config", urlPrefix);
         JSONObject data = new JSONObject();
         data.put("clientId", deviceId);
         data.put("wakeTimeDur", wakeTimeDur);
         data.put("wakeTimeGap", wakeTimeGap);
-        HttpResult httpResult = OkHttps.sync(url).addBodyPara(data).post();
-        String body = httpResult.getBody().toString();
-        logger.info("url: {}, params: {}, result: {}", url, data.toJSONString(), body);
-        return JSONObject.parseObject(body, AjaxResult.class);
+        HttpResult.Body body = OkHttps.sync(url).addBodyPara(data).post().getBody().cache();
+        logger.info("url: {}, params: {}, result: {}", url, data.toJSONString(), body.toString());
+        return body.toBean(AjaxResult.class);
     }
 
+    /**
+     * sendCmdControl
+     *
+     * @param deviceId 设备ID
+     * @param type
+     * @return AjaxResult
+     */
     public static AjaxResult sendCmdControl(String deviceId, int type) {
         String url = String.format("%s/mqttService/v1/cmd/control", urlPrefix);
-        HttpResult httpResult = OkHttps.sync(url).addUrlPara("clientId", deviceId).addUrlPara("type", type).get();
-        String body = httpResult.getBody().toString();
-        logger.info("clientId: {}, sendCmdControl result: {}", deviceId, body);
-        return JSONObject.parseObject(body, AjaxResult.class);
+        HttpResult.Body body = OkHttps.sync(url).addUrlPara("clientId", deviceId).addUrlPara("type", type).get().getBody().cache();
+        logger.info("clientId: {}, sendCmdControl result: {}", deviceId, body.toString());
+        return body.toBean(AjaxResult.class);
     }
 
     /**
      * 5g 状态采样率状态指令接口
      *
-     * @param deviceId
-     * @return
+     * @param deviceId 设备ID
+     * @param retry    重试次数
+     * @return AjaxResult
      */
     public static AjaxResult getDeviceSamplingRate(String deviceId, int retry) {
         String url = String.format("%s/mqttService/getDeviceSamplingRate", urlPrefix);
-        HttpResult httpResult = OkHttps.sync(url).addUrlPara("clientId", deviceId).get();
-        String body = httpResult.getBody().toString();
+        HttpResult.Body body = OkHttps.sync(url).addUrlPara("clientId", deviceId).get().getBody().cache();
         logger.info("clientId: {}, getDeviceSamplingRate result: {}", deviceId, body);
-        AjaxResult result = JSONObject.parseObject(body, AjaxResult.class);
+        AjaxResult result = body.toBean(AjaxResult.class);
         if (result.isSuccess() || retry <= 0)
             return result;
         try {
@@ -127,6 +150,12 @@ public class ApiRequestUtils {
         return getDeviceSamplingRate(deviceId, retry - 1);
     }
 
+    /**
+     * getDeviceSamplingRate
+     *
+     * @param deviceId 设备ID
+     * @return AjaxResult
+     */
     public static AjaxResult getDeviceSamplingRate(String deviceId) {
         return getDeviceSamplingRate(deviceId, 20);
     }

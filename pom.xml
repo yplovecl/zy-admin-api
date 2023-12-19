@@ -217,6 +217,12 @@
             <version>4.0.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>cn.zhxu</groupId>
+            <artifactId>okhttps-fastjson</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+
         <!-- 定时任务 -->
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
