@@ -158,7 +158,8 @@ public class SysUserController extends BaseController
             return error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
         Long enterpriseId = getEnterpriseId();
-        user.setEnterpriseId(enterpriseId);
+        if(enterpriseId > 0)
+            user.setEnterpriseId(enterpriseId);
         user.setUserType(enterpriseId > 0 ? "01" : "00");
         user.setCreateBy(getUsername());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
