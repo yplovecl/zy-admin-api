@@ -243,6 +243,23 @@ public class EquipmentController extends BaseController {
         return ApiRequestUtils.send5gConfigCmd(type, equipment.getEquipmentIdentity(), params);
     }
 
+    @PreAuthorize("@ss.hasPermi('seismograph:equipment:wrConfig')")
+    @GetMapping(value = "/wrConfig/{equipmentId}")
+    public AjaxResult wrConfig(@PathVariable("equipmentId") Long equipmentId) {
+        Equipment equipment = getEquipment(equipmentId);
+        if (ObjectUtils.isEmpty(equipment)) {
+            return error("设备不存在");
+        }
+        JSONObject result = new JSONObject();
+        String cellularKey = String.format("device:config:%s:/device/publish/%s/config/cellular", equipment.getEquipmentIdentity(), equipment.getEquipmentIdentity());
+        JSONObject cellular = rs.getCacheObject(cellularKey);
+        result.put("cellular", cellular);
+        String wifiKey = String.format("device:config:%s:/device/publish/%s/config/wifi", equipment.getEquipmentIdentity(), equipment.getEquipmentIdentity());
+        JSONObject wifi = rs.getCacheObject(wifiKey);
+        result.put("wifi", wifi);
+        return success(result);
+    }
+
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
     @GetMapping(value = "/sendCmdControl/{equipmentId}/{type}")
     public AjaxResult sendCmdControl(@PathVariable("equipmentId") Long equipmentId, @PathVariable("type") Integer type) {
