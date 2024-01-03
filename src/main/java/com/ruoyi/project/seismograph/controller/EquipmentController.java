@@ -255,11 +255,17 @@ public class EquipmentController extends BaseController {
         JSONObject cellular = rs.getCacheObject(cellularKey);
         if (StringUtils.isNotNull(cellular) && !cellular.isEmpty()) {
             result.put("cellular", cellular.getJSONObject("cellular"));
+        } else {
+            String topic = String.format("/device/publish/%s/config/cellular/get", equipment.getEquipmentIdentity());
+            ApiRequestUtils.send5gConfigCmd(5, equipment.getEquipmentIdentity(), JSONObject.of(), topic);
         }
         String wifiKey = String.format("device:config:%s:/device/publish/%s/config/wifi", equipment.getEquipmentIdentity(), equipment.getEquipmentIdentity());
         JSONObject wifi = rs.getCacheObject(wifiKey);
         if (StringUtils.isNotNull(wifi) && !wifi.isEmpty()) {
             result.put("wlanble", wifi.getJSONObject("wlanble"));
+        } else {
+            String topic = String.format("/device/publish/%s/config/wifi/get", equipment.getEquipmentIdentity());
+            ApiRequestUtils.send5gConfigCmd(5, equipment.getEquipmentIdentity(), JSONObject.of(), topic);
         }
         return success(result);
     }
