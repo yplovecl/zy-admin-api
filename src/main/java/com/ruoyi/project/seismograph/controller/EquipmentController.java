@@ -250,11 +250,11 @@ public class EquipmentController extends BaseController {
         if (ObjectUtils.isEmpty(equipment)) {
             return error("设备不存在");
         }
-        JSONObject result = new JSONObject();
+        JSONObject data = new JSONObject();
         String cellularKey = String.format("device:config:%s:/device/publish/%s/config/cellular", equipment.getEquipmentIdentity(), equipment.getEquipmentIdentity());
         JSONObject cellular = rs.getCacheObject(cellularKey);
         if (StringUtils.isNotNull(cellular) && !cellular.isEmpty()) {
-            result.put("cellular", cellular.getJSONObject("cellular"));
+            data.put("cellular", cellular.getJSONObject("cellular"));
         } else {
             String topic = String.format("/device/publish/%s/config/cellular/get", equipment.getEquipmentIdentity());
             ApiRequestUtils.send5gConfigCmd(5, equipment.getEquipmentIdentity(), JSONObject.of(), topic);
@@ -262,12 +262,18 @@ public class EquipmentController extends BaseController {
         String wifiKey = String.format("device:config:%s:/device/publish/%s/config/wifi", equipment.getEquipmentIdentity(), equipment.getEquipmentIdentity());
         JSONObject wifi = rs.getCacheObject(wifiKey);
         if (StringUtils.isNotNull(wifi) && !wifi.isEmpty()) {
-            result.put("wlanble", wifi.getJSONObject("wlanble"));
+            data.put("wlanble", wifi.getJSONObject("wlanble"));
         } else {
             String topic = String.format("/device/publish/%s/config/wifi/get", equipment.getEquipmentIdentity());
             ApiRequestUtils.send5gConfigCmd(5, equipment.getEquipmentIdentity(), JSONObject.of(), topic);
         }
-        return success(result);
+        AjaxResult result = success(data);
+        String statusKey = String.format("device:config:%s:/device/publish/%s/config/status", equipment.getEquipmentIdentity(), equipment.getEquipmentIdentity());
+        JSONObject status = rs.getCacheObject(statusKey);
+        if (StringUtils.isNotNull(status) && !status.isEmpty()) {
+            result.put("deviceStatus", status.getJSONObject("Status"));
+        }
+        return result;
     }
 
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
