@@ -94,6 +94,10 @@ public class EquipmentController extends BaseController {
             jsonObject.put("isSeconded", seconded.getIsSeconded());
             jsonObject.put("returnTime", new SimpleDateFormat("yyyy-MM-dd").format(seconded.getReturnTime()));
         }
+        String pluckStateKey = String.format("device:state:%s:98", equipment.getEquipmentIdentity());
+        if (rs.hasKey(pluckStateKey)) {
+            jsonObject.put("pluckState", rs.getCacheObject(pluckStateKey));
+        }
         JSONObject result = ApiRequestUtils.get5gPayload(equipment.getEquipmentIdentity());
         if (ObjectUtils.isNotEmpty(result)) {
             jsonObject.put("payload", result);
