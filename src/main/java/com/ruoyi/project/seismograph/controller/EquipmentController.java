@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -204,17 +205,25 @@ public class EquipmentController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
-    @PostMapping(value = "/sendCommandHex/{equipmentId}")
-    public AjaxResult sendCommandHex(@PathVariable("equipmentId") Long equipmentId, @RequestBody JSONObject params) {
-        Equipment equipment = getEquipment(equipmentId);
-        if (ObjectUtils.isEmpty(equipment)) {
-            return error("设备不存在");
-        }
+    @PostMapping(value = "/sendCommandHex/{equipmentIds}")
+    public AjaxResult sendCommandHex(@PathVariable Long[] equipmentIds, @RequestBody JSONObject params) {
         String hex = params.getString("hex");
         if (StringUtils.isEmpty(hex)) {
             return error("请输入要发送的指令");
         }
-        return ApiRequestUtils.sendCommandHex(equipment.getEquipmentIdentity(), hex);
+        if (ObjectUtils.isEmpty(equipmentIds)) return error("设备不存在");
+        List<AjaxResult> results = new ArrayList<>();
+        for (Long equipmentId : equipmentIds) {
+
+            Equipment equipment = getEquipment(equipmentId);
+            if (ObjectUtils.isEmpty(equipment)) {
+                results.add(error("设备不存在"));
+                continue;
+            }
+            results.add(ApiRequestUtils.sendCommandHex(equipment.getEquipmentIdentity(), hex));
+        }
+        if (results.size() == 1) return results.get(0);
+        return success("指令已发送");
     }
 
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
@@ -281,13 +290,20 @@ public class EquipmentController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('seismograph:equipment:query')")
-    @GetMapping(value = "/sendCmdControl/{equipmentId}/{type}")
-    public AjaxResult sendCmdControl(@PathVariable("equipmentId") Long equipmentId, @PathVariable("type") Integer type) {
-        Equipment equipment = getEquipment(equipmentId);
-        if (ObjectUtils.isEmpty(equipment)) {
-            return error("设备不存在");
+    @GetMapping(value = "/sendCmdControl/{equipmentIds}/{type}")
+    public AjaxResult sendCmdControl(@PathVariable Long[] equipmentIds, @PathVariable("type") Integer type) {
+        if (ObjectUtils.isEmpty(equipmentIds)) return error("设备不存在");
+        List<AjaxResult> results = new ArrayList<>();
+        for (Long equipmentId : equipmentIds) {
+            Equipment equipment = getEquipment(equipmentId);
+            if (ObjectUtils.isEmpty(equipment)) {
+                results.add(error("设备不存在"));
+                continue;
+            }
+            results.add(ApiRequestUtils.sendCmdControl(equipment.getEquipmentIdentity(), type));
         }
-        return ApiRequestUtils.sendCmdControl(equipment.getEquipmentIdentity(), type);
+        if (results.size() == 1) return results.get(0);
+        return success("指令已发送");
     }
 
     /**
