@@ -17,6 +17,8 @@ import com.ruoyi.project.seismograph.service.IEquipmentSecondedService;
 import com.ruoyi.project.seismograph.service.IEquipmentService;
 import com.ruoyi.project.seismograph.utils.ApiRequestUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,12 +42,15 @@ public class EquipmentController extends BaseController {
 
     private final IEquipmentSecondedService equipmentSecondedService;
 
-    public final RedisCache rs;
+    public final RedisCache redisCache;
 
-    public EquipmentController(IEquipmentService equipmentService, IEquipmentSecondedService equipmentSecondedService, RedisCache rs) {
+    private final RedisTemplate<Object, Object> redisTemplate10;
+
+    public EquipmentController(IEquipmentService equipmentService, IEquipmentSecondedService equipmentSecondedService, RedisCache redisCache, @Qualifier(value = "redisTemplate10") RedisTemplate<Object, Object> redisTemplate10) {
         this.equipmentService = equipmentService;
         this.equipmentSecondedService = equipmentSecondedService;
-        this.rs = rs;
+        this.redisCache = redisCache;
+        this.redisTemplate10 = redisTemplate10;
     }
 
     /**
@@ -60,6 +65,18 @@ public class EquipmentController extends BaseController {
             equipment.setEnterpriseId(enterpriseId);
         }
         List<Equipment> list = equipmentService.selectEquipmentList(equipment);
+//        String cacheData = redisTemplate.opsForValue().get("client:items:payload:0000B4C2E0AE1CAD");
+//        System.out.println(cacheData);
+        for (Equipment item : list) {
+            String cacheKey = StringUtils.format("client:items:payload:{}", item.getEquipmentIdentity());
+            String cacheData = (String) redisTemplate10.opsForValue().get(cacheKey);
+            if (StringUtils.isEmpty(cacheData)) continue;
+            JSONObject jsonObject = JSONObject.parseObject(cacheData);
+            assert jsonObject != null;
+            String lngLat = jsonObject.getString("lngLat");
+            if (StringUtils.isEmpty(lngLat)) continue;
+            if (lngLat.endsWith(",4")) item.setRemark("rtk=4");
+        }
         return getDataTable(list);
     }
 
@@ -96,8 +113,8 @@ public class EquipmentController extends BaseController {
             jsonObject.put("returnTime", new SimpleDateFormat("yyyy-MM-dd").format(seconded.getReturnTime()));
         }
         String pluckStateKey = String.format("device:state:%s:98", equipment.getEquipmentIdentity());
-        if (rs.hasKey(pluckStateKey)) {
-            jsonObject.put("pluckState", rs.getCacheObject(pluckStateKey));
+        if (redisCache.hasKey(pluckStateKey)) {
+            jsonObject.put("pluckState", redisCache.getCacheObject(pluckStateKey));
         }
         JSONObject result = ApiRequestUtils.get5gPayload(equipment.getEquipmentIdentity());
         if (ObjectUtils.isNotEmpty(result)) {
@@ -200,7 +217,7 @@ public class EquipmentController extends BaseController {
         if (ObjectUtils.isEmpty(equipment)) {
             return error("设备不存在");
         }
-        List<?> data = rs.getCacheList("device:store:" + equipment.getEquipmentIdentity());
+        List<?> data = redisCache.getCacheList("device:store:" + equipment.getEquipmentIdentity());
         return success(data);
     }
 
@@ -265,7 +282,7 @@ public class EquipmentController extends BaseController {
         }
         JSONObject data = new JSONObject();
         String cellularKey = String.format("device:config:%s:/device/publish/%s/config/cellular", equipment.getEquipmentIdentity(), equipment.getEquipmentIdentity());
-        JSONObject cellular = rs.getCacheObject(cellularKey);
+        JSONObject cellular = redisCache.getCacheObject(cellularKey);
         if (StringUtils.isNotNull(cellular) && !cellular.isEmpty()) {
             data.put("cellular", cellular.getJSONObject("cellular"));
         } else {
@@ -273,7 +290,7 @@ public class EquipmentController extends BaseController {
             ApiRequestUtils.send5gConfigCmd(5, equipment.getEquipmentIdentity(), JSONObject.of(), topic);
         }
         String wifiKey = String.format("device:config:%s:/device/publish/%s/config/wifi", equipment.getEquipmentIdentity(), equipment.getEquipmentIdentity());
-        JSONObject wifi = rs.getCacheObject(wifiKey);
+        JSONObject wifi = redisCache.getCacheObject(wifiKey);
         if (StringUtils.isNotNull(wifi) && !wifi.isEmpty()) {
             data.put("wlanble", wifi.getJSONObject("wlanble"));
         } else {
@@ -282,7 +299,7 @@ public class EquipmentController extends BaseController {
         }
         AjaxResult result = success(data);
         String statusKey = String.format("device:config:%s:/device/publish/%s/config/status", equipment.getEquipmentIdentity(), equipment.getEquipmentIdentity());
-        JSONObject status = rs.getCacheObject(statusKey);
+        JSONObject status = redisCache.getCacheObject(statusKey);
         if (StringUtils.isNotNull(status) && !status.isEmpty()) {
             result.put("deviceStatus", status.getJSONObject("Status"));
         }

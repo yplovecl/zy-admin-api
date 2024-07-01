@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.seismograph.mapper.EmqxConfigMapper">
+
+    <resultMap type="EmqxConfig" id="EmqxConfigResult">
+        <result property="id" column="id"/>
+        <result property="emqxBaseUrl" column="emqx_base_url"/>
+        <result property="emqxUser" column="emqx_user"/>
+        <result property="emqxPassword" column="emqx_password"/>
+    </resultMap>
+
+    <sql id="selectEmqxConfigVo">
+        select id, emqx_base_url, emqx_user, emqx_password
+        from t_emqx_config
+    </sql>
+
+    <select id="selectEmqxConfigList" parameterType="EmqxConfig" resultMap="EmqxConfigResult">
+        <include refid="selectEmqxConfigVo"/>
+        <where>
+            <if test="emqxUser != null  and emqxUser != ''">and emqx_user = #{emqxUser}</if>
+        </where>
+    </select>
+
+    <select id="selectEmqxConfigById" parameterType="Long" resultMap="EmqxConfigResult">
+        <include refid="selectEmqxConfigVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertEmqxConfig" parameterType="EmqxConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into t_emqx_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="emqxBaseUrl != null">emqx_base_url,</if>
+            <if test="emqxUser != null">emqx_user,</if>
+            <if test="emqxPassword != null">emqx_password,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="emqxBaseUrl != null">#{emqxBaseUrl},</if>
+            <if test="emqxUser != null">#{emqxUser},</if>
+            <if test="emqxPassword != null">#{emqxPassword},</if>
+        </trim>
+    </insert>
+
+    <update id="updateEmqxConfig" parameterType="EmqxConfig">
+        update t_emqx_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="emqxBaseUrl != null">emqx_base_url = #{emqxBaseUrl},</if>
+            <if test="emqxUser != null">emqx_user = #{emqxUser},</if>
+            <if test="emqxPassword != null">emqx_password = #{emqxPassword},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEmqxConfigById" parameterType="Long">
+        delete
+        from t_emqx_config
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteEmqxConfigByIds" parameterType="String">
+        delete from t_emqx_config where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
