@@ -7,14 +7,11 @@ ruoyi:
   # 版权年份
   copyrightYear: 2024
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-  profile: D:/ruoyi/uploadPath
+  profile: /home/ruoyi/uploadPath
   # 获取ip地址开关
   addressEnabled: true
   # 验证码类型 math 数字计算 char 字符验证
   captchaType: math
-  # emqx url
-  emqxUrl: http://182.43.59.216:10003
-  apiUrlPrefix: http://182.43.59.216:18088
 
 # 开发环境配置
 server:
@@ -37,8 +34,8 @@ server:
 # 日志配置
 logging:
   level:
-    com.ruoyi: debug
-    org.springframework: warn
+    com.ruoyi: info
+    org.springframework: error
 
 # 用户配置
 user:
@@ -99,7 +96,7 @@ token:
   secret: abcdefghijklmnopqrstuvwxyz
   # 令牌有效期（默认30分钟）
   expireTime: 30
-  
+
 # MyBatis配置
 mybatis:
   # 搜索指定包别名
@@ -130,7 +127,7 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
-  
+
 # 代码生成
 gen:
   # 作者
