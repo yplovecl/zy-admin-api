@@ -17,10 +17,10 @@ import com.ruoyi.project.seismograph.service.IEquipmentSecondedService;
 import com.ruoyi.project.seismograph.service.IEquipmentService;
 import com.ruoyi.project.seismograph.utils.ApiRequestUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
@@ -44,13 +44,13 @@ public class EquipmentController extends BaseController {
 
     public final RedisCache redisCache;
 
-    private final RedisTemplate<Object, Object> redisTemplate10;
+    private final Jedis jedis;
 
-    public EquipmentController(IEquipmentService equipmentService, IEquipmentSecondedService equipmentSecondedService, RedisCache redisCache, @Qualifier(value = "redisTemplate10") RedisTemplate<Object, Object> redisTemplate10) {
+    public EquipmentController(IEquipmentService equipmentService, IEquipmentSecondedService equipmentSecondedService, RedisCache redisCache, JedisPool jedisPool) {
         this.equipmentService = equipmentService;
         this.equipmentSecondedService = equipmentSecondedService;
         this.redisCache = redisCache;
-        this.redisTemplate10 = redisTemplate10;
+        this.jedis = jedisPool.getResource();
     }
 
     /**
@@ -65,12 +65,15 @@ public class EquipmentController extends BaseController {
             equipment.setEnterpriseId(enterpriseId);
         }
         List<Equipment> list = equipmentService.selectEquipmentList(equipment);
-//        String cacheData = redisTemplate.opsForValue().get("client:items:payload:0000B4C2E0AE1CAD");
-//        System.out.println(cacheData);
+        //得到Jedis对象
         for (Equipment item : list) {
             String cacheKey = StringUtils.format("client:items:payload:{}", item.getEquipmentIdentity());
-            String cacheData = (String) redisTemplate10.opsForValue().get(cacheKey);
+            String cacheData = this.jedis.get(cacheKey);
             if (StringUtils.isEmpty(cacheData)) continue;
+            if (cacheData.startsWith("\"") && cacheData.endsWith("\"")) {
+                cacheData = cacheData.substring(1, cacheData.length() - 1);
+                cacheData = cacheData.replace("\\", "");
+            }
             JSONObject jsonObject = JSONObject.parseObject(cacheData);
             assert jsonObject != null;
             String lngLat = jsonObject.getString("lngLat");

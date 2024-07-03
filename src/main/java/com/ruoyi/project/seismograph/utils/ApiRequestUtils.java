@@ -24,7 +24,7 @@ public class ApiRequestUtils {
 
     @Value("${ruoyi.apiUrlPrefix}")
     public void setUrlPrefix(String apiUrlPrefix) {
-        this.urlPrefix = apiUrlPrefix;
+        urlPrefix = apiUrlPrefix;
     }
 
     /**
@@ -98,7 +98,6 @@ public class ApiRequestUtils {
     }
 
     /**
-     *
      * @param type
      * @param deviceId
      * @param json

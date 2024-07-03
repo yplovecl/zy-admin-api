@@ -28,7 +28,7 @@ spring:
     password: pwd@redis
     # 连接超时时间
     timeout: 30s
-    jedis:
+    lettuce:
       pool:
         # 连接池中的最小空闲连接
         min-idle: 0
@@ -51,9 +51,9 @@ spring:
       slave:
         # 从数据源开关/默认关闭
         enabled: false
-        url: jdbc:mysql://192.168.0.210:10001/seismograph_db?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&allowPublicKeyRetrieval=true
-        username: root
-        password: root@Pwd2023#123
+        url:
+        username:
+        password:
       # 初始连接数
       initialSize: 5
       # 最小连接池数量
