@@ -21,18 +21,24 @@ services:
       - /docker/nginx/log:/var/log/nginx
     privileged: true
     restart: always
-#    network_mode: "bridge"
+    networks:
+      - emqx
 
   zyserver:
     image: pange/zy-server:3.8.8
     environment:
       # 时区上海
       TZ: Asia/Shanghai
-      SPRING_PROFILES_ACTIVE: hunan
+      SPRING_PROFILES_ACTIVE: docker
     volumes:
       # 配置文件
       - /docker/server/logs/:/app/logs/
       - /docker/server/uploads/:/app/uploads/
     privileged: true
     restart: always
-#    network_mode: "bridge"
+    networks:
+      - emqx
+
+networks:
+  emqx:
+    external: true
