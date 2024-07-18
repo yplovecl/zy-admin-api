@@ -20,6 +20,7 @@ services:
       # 日志目录
       - /docker/nginx/log:/var/log/nginx
     privileged: true
+    restart: always
 #    network_mode: "bridge"
 
   zyserver:
@@ -33,4 +34,5 @@ services:
       - /docker/server/logs/:/app/logs/
       - /docker/server/uploads/:/app/uploads/
     privileged: true
+    restart: always
 #    network_mode: "bridge"
