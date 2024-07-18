@@ -3,6 +3,7 @@ version: '3'
 services:
   nginx-web:
     image: nginx:latest
+    container_name: zy-web
     environment:
       # 时区上海
       TZ: Asia/Shanghai
@@ -26,6 +27,7 @@ services:
 
   zyserver:
     image: pange/zy-server:3.8.8
+    container_name: zy-server
     environment:
       # 时区上海
       TZ: Asia/Shanghai
